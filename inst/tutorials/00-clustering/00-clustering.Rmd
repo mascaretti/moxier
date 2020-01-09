@@ -22,7 +22,7 @@ library(plotly)
 
 First of all, we ought to import the data.
 ```{r read-data, exercise=FALSE}
-# load("data/cleaneddata.rda")
+# load("cleaneddata")
 df <- cleaneddata
 ```
 
