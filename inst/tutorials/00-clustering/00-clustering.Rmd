@@ -11,6 +11,7 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 library(learnr)
 knitr::opts_chunk$set(echo = TRUE)
+pkgload::load_all()
 ```
 
 # Clustering
@@ -22,7 +23,7 @@ library(plotly)
 
 First of all, we ought to import the data.
 ```{r read-data, exercise=FALSE}
-df <- read.csv(file = "data/cleaneddata.txt", header = TRUE, sep = ",")
+df <- cleaneddata
 ```
 
 We build subsets of the dataset.
