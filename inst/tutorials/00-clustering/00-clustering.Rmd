@@ -12,6 +12,7 @@ runtime: shiny_prerendered
 library(learnr)
 knitr::opts_chunk$set(echo = TRUE)
 pkgload::load_all()
+data("cleaneddata")
 ```
 
 # Clustering
