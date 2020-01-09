@@ -9,8 +9,12 @@ Authors@R:
 Description: This package containsa set of tutorial introducing
              some basic notions of statistics by means of
              the R programming language.
+Depends: R (>= 3.6.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/mascaretti/moxier
 BugReports: https://github.com/mascaretti/moxier/issues
+Imports: 
+    plotly,
+    learnr
