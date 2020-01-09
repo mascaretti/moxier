@@ -6,7 +6,9 @@ Authors@R:
            family = "Mascaretti",
            role = c("aut", "cre"),
            email = "andrea.mascaretti@polimi.it")
-Description: This package contains a set of tutorial introducing some basic notions of statistics by means of the R programming language.
-License: What license it uses
+Description: This package containsa set of tutorial introducing
+             some basic notions of statistics by means of
+             the R programming language.
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
