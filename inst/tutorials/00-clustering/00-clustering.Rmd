@@ -22,7 +22,7 @@ library(plotly)
 
 First of all, we ought to import the data.
 ```{r read-data, exercise=FALSE}
-cleaneddata <- read.csv(file = "data/cleaneddata.txt", header = TRUE, sep = ",")
+df <- read.csv(file = "data/cleaneddata.txt", header = TRUE, sep = ",")
 ```
 
 We build subsets of the dataset.
