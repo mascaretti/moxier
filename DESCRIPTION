@@ -12,3 +12,5 @@ Description: This package containsa set of tutorial introducing
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+URL: https://github.com/mascaretti/moxier
+BugReports: https://github.com/mascaretti/moxier/issues
