@@ -11,5 +11,5 @@ The goal of moxier is to provide students with material to learn statistics usin
 You can install the released version of moxier from [GitHub](https://github.com/) with:
 
 ``` r
-devtools::install_github("mascaretti/moxier")
+remotes::install_github("mascaretti/moxier")
 ```
