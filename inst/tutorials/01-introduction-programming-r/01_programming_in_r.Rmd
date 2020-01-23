@@ -16,6 +16,10 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Basic Operations in R
 
+
+
+
+
 ### Introduction
 The aim of the lab session is to teach you the basics of the R programming language. We will follow the first chapters of [Hands-On Programming with R](https://rstudio-education.github.io/hopr/) by Garret Grolemund, a free and open-source resource.
 
@@ -46,6 +50,10 @@ We can try to type some basic operations as
 You will notice the `[1]` that appears before you see the result. It is a way for R to tell what element of the solution is displayed. In the case of a single number, we only have one element.
 
 
+
+
+
+
 ### Exercise 1
 
 *Type in the R console some basic operations and observe the results*
@@ -57,12 +65,21 @@ Write the R code required to add two plus two:
 ```
 
 
+
+
+
+
 ### Longer results
 
 This change whenever we have, for instance, a vector as
 ```{r vector-example, exercise=FALSE, include=TRUE, echo=TRUE}
 91:115
 ```
+
+
+
+
+
 
 
 ### Incomplete expressions
@@ -74,11 +91,20 @@ If you type a command that is incomplete, R will prompt you with a `+` sign unti
 ```
 
 
+
+
+
+
 ### Wrong expressions
 At the same time, it will give you an error when it is not possible to obtain an expression that it can interpret.
 ```{r wrong-expression-example, exercise=FALSE, include=TRUE, error=TRUE, echo=TRUE}
 3 % 5
 ```
+
+
+
+
+
 
 ### Exercise 2
 
@@ -96,6 +122,12 @@ To see if you've got the hang of how R works, let us play a game:
 
 ```
 
+
+
+
+
+
+
 ## Objects in R
 
 
@@ -111,11 +143,23 @@ die
 ```
 
 
+
+
+
+
+
 ### Rules of assignment
 You can name objects however you may please, but bear in mind that names are *case sensitive* and that there are things you *cannot* do:
 
 - Names *cannot* begin with: `^`, `!`, `$`, `@`, `+`, `-`, `/` or `*`.
 - Names *cannot* being with a number.
+
+
+
+
+
+
+
 
 
 ### Reassigning a name
@@ -131,11 +175,21 @@ a
 Notice that in the environment pane of RStudio, objects that you create are added to the list.
 
 
+
+
+
+
+
 ### Checking the objects
 To see what objects you have created you can type `ls()`.
 ```{r objects-example, exercise=FALSE, include=TRUE, echo=TRUE}
 ls()
 ```
+
+
+
+
+
 
 
 ## Some vector algebra
@@ -151,12 +205,23 @@ exp(die)
 
 
 
+
+
+
+
+
 ### Element-Wise Operations
 I am sure you have noticed that something seemingly bizarre has happened. R has expanded the scalars to vectors and then computed the *element-wise* operation we have told it.
 To see it, let us consider what happens when we do `die * die`.
 ```{r linear-algebra-die-example, exercise=FALSE, include=TRUE, echo=TRUE}
 die * die
 ```
+
+
+
+
+
+
 
 
 
@@ -169,11 +234,23 @@ die + 1:2
 ```
 
 
+
+
+
+
+
+
 ### Vector Recycling: incompatible dimensions
 R will prompt you a *warning message* whenever the dimensions are not compatible.
 ```{r vector-recycling-not-working-example, exercise=FALSE, include=TRUE, echo=TRUE, error=TRUE}
 die + 1:5
 ```
+
+
+
+
+
+
 
 
 
@@ -186,7 +263,13 @@ die %o% die
 
 
 
+
 ## Functions
+
+
+
+
+
 
 
 ### Introduction to functions
@@ -210,6 +293,11 @@ round(mean(die + 1))
 ```
 
 
+
+
+
+
+
 ### Rolling a dice
 This is very convenient for us. We are interested in selecting a random face of a die. The function `sample` is what we need.
 ```{r sample-die-example, exercise=FALSE, echo=TRUE, include=TRUE}
@@ -220,11 +308,20 @@ sample(die)
 It looks like something is out of place. We obtain an entire shuffling of the data. Maybe we need to have a closer look at the `sample` function.
 
 
+
+
+
+
+
 ### Understanding a function
 To better understand a function, say `foo`, we use the `help` function to read the documentations. The `args` function returns the arguments of `foo`.
 ```{r help-function-example, exercise=FALSE, echo=TRUE, include=TRUE}
 args(sample)
 ```
+
+
+
+
 
 
 ### The arguments of `sample`
@@ -245,6 +342,11 @@ sample(die, size = 1)
 ```
 
 
+
+
+
+
+
 ### Passing values to functions
 Notice what we have done here. We have called a function passing some arguments:
 
@@ -258,8 +360,15 @@ As a side, notice that any text preceded by `#` is a comment and will be ignored
 
 
 
+
+
+
+
 ### Writing our first function
 We are now interested in writing our first function. The function should return the sum of two dice being rolled.
+
+
+
 
 
 
@@ -269,6 +378,10 @@ The syntax to write a function is quite straightforward.
 my_function <- function() {}
 ```
 In this case, we have called the function ```my_function```. The ```function``` constructor is then followed by brackets `()`: here we can pass the arguments. Between the curly brackets ```{}``` we put the body of the function: the set of instructions our function should compute.
+
+
+
+
 
 
 
@@ -287,6 +400,10 @@ roll()
 roll()
 ```
 Pretty neat, right?
+
+
+
+
 
 
 
@@ -313,6 +430,9 @@ roll <- function() {
   sum(extraction)
 }
 ```
+
+
+
 
 
 
@@ -355,9 +475,20 @@ roll <- function(die = 1:6, number_die = 2) {
 ```
 
 
+
+
+
+
+
+
 ## Scripts in R
 So, after all this work it may be worth it to save our function and use it in the future. How can we do so?
 RStudio allows you to create R script. An R script is a set of instructions that can be stored as a `.R` file and executed at a later time. It is a very convenient feature, as it allows to store your (well-documented) code. To crate a new script, you can either open it manually in RStudio or press ```Ctrl+Shift+N``` on Windows and ```Cmd+Shift+N``` on MacOs.
+
+
+
+
+
 
 ## Conclusion
 Congratulations! You have moved your very first steps using the R programming language. 
