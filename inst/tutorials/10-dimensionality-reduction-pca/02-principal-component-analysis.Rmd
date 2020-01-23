@@ -1,0 +1,258 @@
+---
+title: "PCA: Exercise 1"
+author: "Andrea Mascaretti"
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(learnr)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+```
+
+
+# PCA: Exercise 1
+Perform PCA on `USArrests` data.
+
+```{r}
+warning("princomp doesn't work")
+```
+
+
+
+## Exploratory Data Analysis
+
+The first thing we need to do is to load the data.
+```{r data-load}
+data(USArrests)
+```
+
+Summarise the data frame.
+```{r data-inspect-summary, exercise = TRUE}
+
+```
+```{r data-inspect-summary-solution}
+summary(USArrests)
+```
+
+Plot the pairs.
+```{r data-inspect-pairs, exercise = TRUE}
+
+```
+```{r data-inspect-pairs-solution}
+plot(USArrests, pch = 19)
+```
+
+
+Plot boxplots of the data.
+```{r data-inspect-boxplot, exercise = TRUE}
+```
+```{r data-inspect-boxplot-hint}
+# boxplot(as.matrix(USArrests), col = "gold")
+```
+
+
+
+## PCA - Original Data
+
+Compute the Principal Components.
+```{r pca-original, exercise = TRUE}
+
+```
+```{r pca-original-solution}
+pc.USArrests <- princomp(USArrests, scores = T)
+pc.USArrests
+```
+
+
+### Loadings
+Inspect the loadings.
+```{r pca-original-loadings, exercise = TRUE}
+
+```
+```{r pca-original-loadins-solution}
+pc.USArrests <- princomp(USArrests, scores = T)
+load.rec <- pc.USArrests$loadings
+load.rec
+```
+
+
+We report them graphically.
+```{r pca-original-loadings-plot, exercise = TRUE}
+
+```
+```{r pca-original-loadings-plot-solution}
+par(mar = c(1, 4, 0, 2), mfrow = c(4, 1))
+for (i in 1:4) barplot(load.rec[, i], ylim = c(-1, 1))
+```
+
+
+### Explained Variance
+
+We now consider the explained variance. Try to plot the explained variance per principal component.
+```{r pca-original-explained-variance, exercise = TRUE}
+
+```
+```{r pca-original-explained-variance-solution}
+layout(matrix(c(2, 3, 1, 3), 2, byrow = T))
+barplot(pc.USArrests$sdev^2, las = 2, main = "Principal components", ylim = c(0, 7e3), ylab = "Variances")
+abline(h = 1, col = "blue")
+barplot(sapply(USArrests, sd)^2, las = 2, main = "Original variables", ylim = c(0, 7e3), ylab = "Variances")
+
+abline(h = 1, col = "blue")
+abline(h = 0.8, lty = 2, col = "blue")
+pc.USArrests <- princomp(USArrests, scores = T)
+axis(2, at = 0:10 / 10, labels = 0:10 / 10)
+axis(1, at = 1:ncol(USArrests), labels = 1:ncol(USArrests), las = 2)
+```
+
+
+
+### Scores
+Compute the scores and visualise the first ones.
+```{r pca-original-scores, exercise = TRUE}
+
+```
+```{r pca-original-scores-solution}
+scores.USArrests <- pc.USArrests$scores
+head(scores.USArrests)
+```
+
+
+And plot the scores to get a visual grasp!
+```{r pca-original-scores-plot, exercise = TRUE}
+
+```
+```{r pca-original-scores-plot-solution}
+layout(matrix(c(1, 2), 2))
+boxplot(USArrests, las = 2, col = "red", main = "Original variables")
+scores.USArrests <- data.frame(scores.USArrests)
+boxplot(scores.USArrests, las = 2, col = "red", main = "Scores")
+```
+
+
+
+Finally, make a biplot.
+```{r pca-original-biplot, exercise = TRUE}
+
+```
+```{r pca-original-biplot-solution}
+biplot(pc.USArrests, scale = 0, cex = .7)
+```
+
+
+
+## PCA - Standardised Data
+### Data Preprocessing
+
+We now consider the standardised data.
+Standardise the data.
+```{r pca-sd-data, exercise = TRUE}
+
+```
+```{r pca-sd-data-solution}
+USArrests.sd <- scale(USArrests)
+USArrests.sd <- data.frame(USArrests.sd)
+```
+
+
+
+It is always a good idea to start with some data visualisation. Let us make a boxplot!
+```{r pca-sd-boxplot, exercise = TRUE}
+
+```
+```{r pca-sd-boxplot-solution}
+boxplot(USArrests.sd, col = "gold")
+```
+
+
+### PCA
+Let us compute the PCA.
+```{r pca-sd-fit, exercise = TRUE}
+
+```
+```{r pca-sd-fit-solution}
+pc.USArrests <- princomp(USArrests.sd, scores = T)
+```
+
+
+Inspect the loadings.
+```{r pca-sd-loadings, exercise = TRUE}
+
+```
+```{r pca-sd-loadings-solution}
+load.rec <- pc.USArrests$loadings
+load.rec
+```
+
+
+We also wish to make a graphical representation of the loadings of the principal components.
+```{r pca-sd-loadings-plot, exercise = TRUE}
+
+```
+```{r pca-sd-loadings-plot-solution}
+par(mar = c(1, 4, 0, 2), mfrow = c(4, 1))
+for (i in 1:4) barplot(load.rec[, i], ylim = c(-1, 1))
+```
+
+
+
+
+### Variance
+Let us plot the explained variance per principal component.
+```{r pca-sd-explained-variance, solution = TRUE}
+
+```
+```{r pca-sd-explained-variance-solution}
+USArrests.sd <- scale(USArrests)
+layout(matrix(c(2, 3, 1, 3), 2, byrow = T))
+barplot(pc.USArrests$sdev^2, las = 2, main = "Principal components", ylim = c(0, 4), ylab = "Variances")
+abline(h = 1, col = "blue")
+barplot(sapply(USArrests.sd, sd)^2, las = 2, main = "Original variables", ylim = c(0, 4), ylab = "Variances")
+plot(cumsum(pc.USArrests$sd^2) / sum(pc.USArrests$sd^2), type = "b", axes = F, xlab = "number of components", ylab = "contribution to the total variace", ylim = c(0, 1))
+abline(h = 1, col = "blue")
+abline(h = 0.8, lty = 2, col = "blue")
+box()
+axis(2, at = 0:10 / 10, labels = 0:10 / 10)
+axis(1, at = 1:ncol(USArrests.sd), labels = 1:ncol(USArrests.sd), las = 2)
+```
+
+
+
+### Scores
+Let us inspect the scores and inspect the first few.
+```{r pca-sd-scores, exercise = TRUE}
+
+```
+```{r pca-sd-scores-solution}
+scores.USArrests <- pc.USArrests$scores
+head(scores.USArrests)
+```
+
+
+
+### Dispersion
+We now wish to visualise the dispersion of the original data and the dispersion of the scores.
+```{r pca-sd-dispersion, exercise = TRUE}
+
+```
+```{r pca-sd-dispersion-solution}
+layout(matrix(c(1, 2), 2))
+boxplot(USArrests.sd, las = 2, col = "red", main = "Original variables")
+scores.USArrests <- data.frame(scores.USArrests)
+boxplot(scores.USArrests, las = 2, col = "red", main = "Scores")
+```
+
+
+### Biplot
+To conclude, let us make a biplot.
+```{r pca-sd-biplot, exercise = TRUE}
+
+```
+```{r pca-sd-biplot-solution}
+biplot(pc.USArrests, scale = 0, cex = .7)
+```

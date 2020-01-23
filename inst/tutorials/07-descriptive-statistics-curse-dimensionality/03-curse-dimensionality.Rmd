@@ -1,0 +1,128 @@
+---
+title: "Univariate Descriptive"
+author: "Andrea Mascaretti"
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+```
+
+# Curse of dimensionality
+## Introduction
+Given $N$ random independend points with uniform distribution in the ball $\mathcal{B}_{p}\left[0,\,1\right] \in \mathbb{R}^{p}$, compute the density of the distance, the expected value and the median of the point closest to the origin.
+The higher $p$, the bigger the values of the support of the aforementioned distribution
+
+
+
+
+
+## Density
+Density of the distribution of the distance of the $N$ closest points $x_i$ such that $x_i \sim \mathcal{U}\left(\mathcal{B}_{p}\left[0,\,1\right]\right)$.
+
+```{r density-function}
+dmin <- function(x, p, N) {
+  p * N * (1 - x^p)^(N - 1) * x^(p - 1)
+}
+```
+
+
+
+
+### Median
+We create a function for the median of the distribution of the distance of the $N$ closest points $x_i$ such that $x_i \sim \mathcal{U}\left(\mathcal{B}_{p}\left[0,\,1\right]\right)$.
+
+```{r density-function-median}
+medmin <- function(p, N) {
+  (1 - .5^(1 / N))^(1 / p)
+}
+```
+
+
+
+### Mean
+We set the mean of the distribution of the distance of the $N$ closest points $x_i$ such that $x_i \sim \mathcal{U}\left(\mathcal{B}_{p}\left[0,\,1\right]\right)$.
+```{r}
+meanmin <- function(p, N) {
+  sdmin <- function(x) {
+    x * dmin(x, p, N)
+  }
+  integrate(sdmin, 0, 1)
+}
+```
+
+
+
+
+## Visualising the curse of dimensionality
+### Density
+We plot the density for varying $p$ (the space dimension) and set $N = 100$.
+```{r plots}
+x <- seq(0, 1, .01)
+
+
+plot(x, dmin(x, 1, 100),
+  type = "l", main = "Density of MinDistance",
+  xlab = "x", ylab = "density", ylim = c(0, 20), lwd = 3
+)
+lines(x, dmin(x, 5, 100), col = "green", lwd = 3)
+lines(x, dmin(x, 10, 100), col = "red", lwd = 3)
+lines(x, dmin(x, 20, 100), col = "blue", lwd = 3)
+legend(
+  x = .8, y = 20, legend = c("p=1", "p=5", "p=10", "p=20"),
+  fill = c("black", "green", "red", "blue")
+)
+```
+
+
+
+
+
+### Median
+
+We plot the median for varying $p$ (the space dimension) and set $N = 100$.
+
+```{r}
+plot(1:20, medmin(1:20, 100),
+  main = "Median of MinDistance (N=100)",
+  xlab = "Dimension p", ylab = "Median(MinDistance)", ylim = c(0, 1)
+)
+```
+
+
+```{r}
+mediana <- c()
+for (p in 1:5) mediana <- c(mediana, medmin(p, 100^p))
+p <- 1:5
+
+
+plot(p, mediana,
+  main = "Median of MinDistance (N=100^p)",
+  xlab = "Dimension p", ylab = "Median(MinDistance)", ylim = c(0, 1)
+)
+
+```
+
+
+
+
+### Mean
+
+
+We plot the mean for varying $p$ (the space dimension) and set $N = 100$.
+```{r}
+media <- c()
+for (p in 1:20) media <- c(media, meanmin(p, 100)$value)
+p <- 1:20
+
+plot(p, media,
+  main = "Expected value of MinDistance (N=100)",
+  xlab = "Dimension p", ylab = "E(MinDistance)", ylim = c(0, 1)
+)
+
+```

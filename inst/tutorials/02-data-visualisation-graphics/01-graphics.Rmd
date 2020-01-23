@@ -1,0 +1,168 @@
+---
+title: "Graphics in Base R"
+author: "Andrea Mascaretti"
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+```
+
+
+# Graphics in R
+
+## Introduction
+
+In this tutorial, we are going to focus on plots and graphics. We are going to follow the [official R documentation](https://cran.r-project.org/)
+
+Graphical facilities are an important part of the R environment. They also play a crucial role in the vast majority of statistical enquiries. 
+
+At start up, R initiates a *device driver*, which opens a *graphics window* for the display of graphics.
+
+There are three main groups of R plotting commands:
+  - High Level
+    Plotting functions that create new plots on the graphic device, usually including axes, labels, titles and so on.
+  - Low Level
+    Plotting functions that add more information to an existing plot, such as extra points or lines (or labels, etc...).
+  - Interactive
+    Functions that allow you to interact with a graph to extract information or to add it.
+
+We are here going to focus only on the base graphics. However, there are some alternatives. For instance, a separate sub-system is contained in the **grid** packages: it is both more powerful and complicated. Another option is the [**lattice**](http://lattice.r-forge.r-project.org/): it builds on **grid** and expands its capacities.
+An interesting alternative is the [ggplot2](https://ggplot2.tidyverse.org/) package: it contains a set of function to create rather beautiful plots.
+
+
+## High-Level
+
+### The `plot` function
+
+One of the function that is used most often is the `plot()` function. It is a *generic* function: the type of plot produced depends on the type or *class* of the first argument.
+
+   * `plot(x, y)` or `plot(xy)`
+     - If `x` and `y` are vectors, the command produces a scatterplot of `y` against `x`. The same effect is obtained by providing a list containing to elements `x` and `y` or a two-column matrix.
+     
+   * `plot(x)`
+      - If `x` is a time series, then a time-series plot is created. If `x` is a vector, then a plot containing the values in the vector against its index is produced. If `x` is a complex vector, then a plot of imaginary versus real part is created.
+      
+   * `plot(f)` or `plot(f, y)`
+     - If `f` is a is a factor object, `y` is a numeric vector. The first one creates a bar plot of `f`, whereas the second produces boxplots of `y` for each level of `f`.
+     
+   * `plot(df)` or `plot(~ expr)` or `plot(y ~ expr)`
+     - In this case, `df` is a data frame, `y` is an object of any kind and `expr` is a list of objects, separated by `+`. The first two forms produce distributional plots of the variables in a data frame. (first form) or of a number of named objects (second form). The third firm plots `y` against every object named in `expr`.
+
+
+**Exercise:** Experiment a bit with the iris dataset!
+```{r high-level, exercise = TRUE}
+data("iris")
+
+```
+
+
+### Displaying multivariate data
+
+R provides two very functions to represent multivariate data: `pairs()` and `coplot()`.
+
+Let us assume that we wish to plot `X`, a data frame (or numeric matrix).
+
+The command `pairs(X)` produces a pairwise scatterplot matrix of the variables defined by the columns of `X`, thus resulting in $n(n-1)$ plots. The plots are arranged in a matrix with the rows and columns  that are scale constant.
+
+However, when three or four variables are involved, the `coplot()` function may be more useful.
+Let us assume that we have `a` and `b`, both numeric vectors, and `c`, which is either a numeric vector or a factor object. The command `coplot(a ~ b | c)` produces scatterplots of `a` against `b`, for given values of `c`. Whenever `c` is a factor, this means that `a` is plotted against `b` for the different values of `c`. If `c` is numeric, then it is divided into a number of *conditioning intervals* and, for each interval, `a` is plotted against `b` for the values of `c` within the interval.
+It is possible to also write `coplot(a ~ b | c + d)`, to produce scatterplots of `a` against `b` for every joint conditioning interval of `c` and `d`.
+Notice that even though both functions produce scatterplots by default, it is possible to obtain different plots by setting the value of the `panel =` argument of the functions.
+An interesting results is obtained setting `panel = panel.smooth()` in the `pairs` function.
+
+
+**Exercise:** Try the various functions on the Iris dataset.
+```{r multivariate-data, exercise = TRUE}
+data(iris)
+
+```
+
+
+### Display Graphics
+
+Other high-level graphics functions that are worth mentioning are `qqnorm()`, `qqline()`, `qqplot()`, `hist()`, `dotchart()`
+
+### Arguments to high-level functions
+
+One of the most important is `type =`. It takes different values:
+
+   * `type = "p"`
+      - Plot individual points
+    
+   * `type = "l"`
+      - Plot lines
+    
+   * `type = "b"`
+      - Plot points connected by lines (i.e. *both*)
+    
+   * `type = "o"`
+      - Plot points overlaid by lines
+    
+   * `type = "h"`
+      - Plot vertical lines from points to the zero axis: *high-density*
+    
+   * `type = "s"`, `type = "S"`
+      - Step-function plots. In the first form, the top of the vertical defines the point; in the second the bottom.
+    
+   * `type = "n"`
+      - No plotting at all. It may be useful for successive iterations.
+
+Labels are set by using the `xlab = ` and `ylab = ` arguments. A string is expected afterwards. In a similar fashion, the title and the subtitles are set with `main = ` and `sub = `
+
+
+**Exercise:** Plot different line types and points.
+```{r plot-lines, exercise = TRUE}
+
+```
+
+
+## Low-level
+
+Sometimes high-level functions are simply not enough. Low-level plotting commands were created just for that: they can be used to add extra information to the current plot.
+
+For instance, `points(x, y)` adds points to a graph, `lines(x, y)` adds points or connected lines (depending on the `type = ` argument), `abline(a, b)` adds line of slope `b` and intercept `a` and so on.
+
+
+*Exercise*: Get creative! Create a plot of the iris dataset and add some points and lines.
+```{r low-level, exercise = TRUE}
+data(iris)
+```
+
+
+## Interactive
+We are not going into the details of this particular set of functions. We only cover the `locator(n, type)` function. This function waits for the user to select locations on the current plot using the left mouse button. It continues until `n` points have been selected (default is 512) or another mouse button is pressed. The `type` allows for plotting at the selected point.
+An example may be `text(locator(1), "Outlier", adj=0)`, to place the label of an outlier close to the point.
+
+**Exercise:** Make a scatterplot and mark a point as "My favourite".
+```{r interactive, exercise = TRUE}
+data(iris)
+
+```
+
+
+## Graphics Parameters
+There are many graphing parameters, to change the look and feel of plots. For instance, the argument `pch = ` takes values between 0 and 25, it produces different plotting symbols (such as points). `lty =` stands for line type, `lwd = ` for line widths, `col = ` for the color of lines, texts, points and such, `cex = ` stand for character expansion.
+
+**Exercise:** Make a scatterplot of two quantitative features of the Iris dataset. What happens if you set the colour to be like the `Species`?
+```{r graphics-parameters, exercise = TRUE}
+data(iris)
+
+
+```
+
+
+## Multiple Figure Environment
+R allows you to create an $n$ by $m$ array of figures on a single page. This is usually done by setting, for instance, `mfcol = c(3, 2)` or `mfrow = c(2, 4)`. The first value is the number of columns, whereas the second is the number of rows. The difference is that in the first case the plots are filled column-wise and in the second they are filled row-wise.
+
+**Exercise:** Make four plots in the same graph.
+```{r multiple-figure, exercise = TRUE}
+data(iris)
+
+```
+

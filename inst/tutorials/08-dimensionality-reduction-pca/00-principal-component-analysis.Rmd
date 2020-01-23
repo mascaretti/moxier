@@ -1,0 +1,203 @@
+---
+title: "PCA: Example 1"
+author: "Andrea Mascaretti"
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+```
+
+# Example 1: PCA of simulated data
+
+## Generating the dataset
+We generate the data, after setting the seed. We are going to sample from a multivariate normal distribution.
+We need to define $\mu$ and $\Sigma$, mean vector and covariance matrix. Moreover, we need to set $n$, the number of samples.
+
+```{r 01-data, exercise = FALSE}
+# Loading libraries ---------------------
+library(mvtnorm)
+
+# Setting the seed ----------------------
+set.seed(26102016)
+
+# Setting mean, variance, samples -------
+mu  <-  c(1,2)
+sig <-  matrix(data = c(1, 1, 1, 4), nrow = 2)
+n   <-  100
+
+# Sampling the data ---------------------
+X <- rmvnorm(n, mu, sig)
+```
+
+
+## Analysis of the data
+
+
+### Plot
+We plot the data
+```{r 01-plot, echo=TRUE, exercise=FALSE}
+plot(X, asp=1, xlab='Var1', ylab='Var2', pch=19)
+```
+
+And add the sample mean
+```{r 01-plot-sample-mean, echo=TRUE, exercise=FALSE}
+plot(X, asp=1, xlab='Var1', ylab='Var2', pch=19)
+points(colMeans(X)[1], colMeans(X)[2], col='red', pch=19,lwd=3)
+```
+
+We then plot the projection on the x and y axes and compute the variance.
+
+
+
+### Axis X
+```{r 01-plot-projection-x, echo=TRUE, exercise=FALSE}
+plot(X, asp=1, xlab='Var1', ylab='Var2', pch=19)
+points(colMeans(X)[1], colMeans(X)[2], col='red', pch=19,lwd=3)
+abline(h=colMeans(X)[2], lty=2, col='grey')
+points(X[,1], rep(colMeans(X)[2], n), col='red')
+```
+
+```{r 01-variance-x}
+var(X[,1])
+```
+
+
+
+### Axis Y
+```{r 01-plot-projection-y, echo=TRUE, exercise=FALSE}
+plot(X, asp=1, xlab='Var1', ylab='Var2', pch=19)
+points(colMeans(X)[1], colMeans(X)[2], col='red', pch=19,lwd=3)
+abline(v=colMeans(X)[1], lty=2, col='grey')
+points(rep(colMeans(X)[1], n), X[,2], col='red')
+```
+
+```{r 01-variance-y}
+var(X[,2])
+```
+
+
+### Arbitrary direction
+We can evaluate the variability of the dataset along any direction of the plane.
+
+For instance, consider the direction with angle $\theta$ with the x axis:
+$\theta = \frac{\pi}{6}$
+
+```{r 01-plot-projecton-arbitrary, echo=TRUE, exercise=FALSE}
+# Set theta ------------------------------
+theta <- pi / 6
+
+# Plot points ----------------------------
+plot(X, asp=1, xlab='Var1', ylab='Var2', pch=19)
+abline(a = colMeans(X)[2] - tan(theta)*colMeans(X)[1], b = tan(theta), lty=2)
+a <- c(cos(theta), sin(theta))
+proj30=(a)%*%(t(X)-colMeans(X))
+points(colMeans(X)[1]+cos(theta)*proj30, 
+       colMeans(X)[2]+sin(theta)*proj30, col='red')
+```
+
+Try to change the value of $\theta$ and see what happens!
+```{r 01-plot-function, echo=FALSE, exercise=FALSE}
+plot_direction <- function(X, theta) {
+  tan_theta <- tan(theta)
+  column_means <- colMeans(X)
+  
+  plot(X, asp = 1, xlab = 'Var1', ylab = 'Var2', pch = 19)
+  abline(a = column_means[2] - tan_theta * column_means[1], b = tan_theta, lty = 2)
+  a <- c(cos(theta), sin(theta))
+  
+  projection <- a %*% (t(X) - column_means)
+  points(column_means[1] + cos(theta) * projection,
+         column_means[2] + sin(theta) * projection,
+         col='red')
+}
+```
+
+```{r 01-plot-exercise, exercise=TRUE}
+theta <- pi * 1/6
+plot_direction(X = X, theta = theta)
+```
+
+
+
+
+### All the directions
+We now compute the variance along all the directions.
+```{r 01-theta, echo=TRUE, exercise=FALSE}
+theta <- seq(from = 0, to = 2*pi, by = 2*pi/3600)
+```
+
+And we compute the variances.
+```{r 01-variances-computation, exercise=FALSE}
+N <- length(theta)
+a <- matrix(data = c(cos(theta), sin(theta)), nrow = N, ncol = 2, byrow = FALSE)
+Var <- apply(X = a, MARGIN = 1, FUN = function(x) cov(X %*% x))
+```
+
+
+### Analysis
+We now want to see how the variances change according to the direction.
+```{r 01-variance-directions, exercise=FALSE}
+(max_var   <- max(Var))
+(max_theta <- theta[which.max(Var)])
+(max_a     <- c(cos(max_theta), sin(max_theta)))
+
+(min_var   <- min(Var))
+(min_theta <- theta[which.min(Var)])
+(min_a     <- c(cos(min_theta), sin(min_theta)))
+```
+
+
+
+### Plotting the results
+```{r 01-plotting-results, exercise=FALSE}
+par(mfrow=c(1,2))
+plot(X, asp=1, xlab='Var 1', ylab='Var 2',pch=20)
+abline(a = colMeans(X)[2] - tan(max_theta)*colMeans(X)[1], b = tan(max_theta), lty = 4, col = 'navyblue', lwd = 2)
+abline(a = colMeans(X)[2] - tan(min_theta)*colMeans(X)[1], b = tan(min_theta), lty = 4, col = 'red', lwd = 2)
+
+plot(theta, Var, type = 'l', col='dark grey', lwd = 2,ylab='Variance')
+points(max_theta, max_var, pch=16, col='navyblue')
+points(min_theta, min_var, pch=16, col='red')
+```
+
+
+
+### Exact Computation
+We now check what we have found against the actual values. We compute the loads (`loads`) and the variances (`var_pc`).
+```{r 01-true-components, echo=TRUE, exercise=FALSE}
+(loads <- eigen(cov(X))$vectors)
+(var_pc <- eigen(cov(X))$values)
+```
+
+```{r 01-true-plot}
+# Set the graph -----------------------------------------------
+par(mfrow=c(1,2))
+
+# Plot the points ---------------------------------------------
+plot(X, asp=1, xlab='Var 1', ylab='Var 2',pch=20)
+
+# Compute the column means of X -------------------------------
+M <- colMeans(X)
+
+# Plot directions of maximum and minimum variance -------------
+abline(a = M[2] - loads[2,1]/loads[1,1]*M[1], b = loads[2,1]/loads[1,1], lty = 2, col = 'dark blue', lwd = 2)
+abline(a = M[2] - loads[2,2]/loads[1,2]*M[1], b = loads[2,2]/loads[1,2], lty = 2, col = 'dark red', lwd = 2)
+
+abline(a = M[2] - tan(max_theta)*M[1], b = tan(max_theta), lty = 4, col = 'navyblue', lwd = 2)
+abline(a = M[2] - tan(min_theta)*M[1], b = tan(min_theta), lty = 4, col = 'red', lwd = 2)
+
+# Plot the possible angles
+plot(theta, Var, type = 'l', col='dark grey', lwd = 2,ylab='Variance')
+
+# Plot the angles of maximum and minimum variances ------------
+points(max_theta, max_var, pch=20, col='navyblue')
+points(min_theta, min_var, pch=20, col='red')
+points(atan(loads[2,1]/loads[1,1]), max_var, pch=3, col='dark blue')
+points(atan(loads[2,2]/loads[1,2])+pi, min_var, pch=3, col='dark red')
+```

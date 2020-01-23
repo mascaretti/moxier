@@ -1,0 +1,510 @@
+---
+title: "Regression: Exercise 1"
+author: "Andrea Mascaretti"
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(learnr)
+knitr::opts_chunk$set(echo = TRUE, exercise = FALSE)
+```
+
+
+# Linear Regression
+## Introduction
+
+We now consider a model of the form:
+
+
+  - $m_{100} = \beta_0 + \beta_1 \cdot m_{200} + \epsilon$
+  - $\epsilon \sim \mathcal{N}\left(0,\, \sigma^2\right)$
+  
+We load the libraries, the data and set the variables.
+```{r load-libraries}
+library(kknn)
+```
+
+
+```{r load-data}
+(record <- read.table(file = "../data/record.txt", header = TRUE))
+response <- record[, "m100"]
+regressor <- record[, "m200"]
+```
+
+
+We make a first plot.
+```{r plot-data}
+plot(regressor, response, asp = 1)
+grid()
+abline(0, 1, lty = 3)
+```
+
+
+
+## Linear Model
+We fit a linear model.
+```{r lm}
+fm <- lm(response ~ regressor)
+print(summary(fm))
+```
+
+We plot the results.
+```{r lm-plot}
+plot(regressor, response, asp = 1)
+grid()
+abline(0, 1, lty = 3)
+abline(coefficients(fm), col = "red")
+points(regressor, fitted(fm), col = "red", pch = 16)
+```
+
+
+
+## Diagnostics and Analysis
+We create a qq-plot of the residuals,
+```{r lm-qqplot}
+qqnorm(residuals(fm))
+```
+
+perform a Normality test of the residuals,
+```{r lm-shapiro}
+shapiro.test(residuals(fm))
+```
+
+print the estimates of the regression coefficients,
+```{r lm-coefficients}
+coefficients(fm)
+```
+
+compute CI of the regression coefficients,
+```{r lm-coefficients-ci}
+confint(fm, level = 0.95)
+```
+
+print the estimate of the error variance
+```{r lm-error-variance}
+s2 <- sum(residuals(fm)^2) / fm$df
+sqrt(s2)
+```
+
+plot the residuals vs regressor
+```{r lm-residuals-vs-regressor}
+plot(regressor, residuals(fm))
+abline(h = 0)
+```
+
+
+
+
+## Prediction
+Compute a CI for the mean $m_{100}$ record of countries that have $m_{200}$ record equal to 23.
+
+Firstly, we build a new data base,
+```{r lm-point-data}
+(Z0 <- data.frame(regressor = 23))
+```
+
+then we compute the CI
+```{r lm-point-ci}
+(CI <- predict(fm, Z0, interval = "confidence"))
+```
+
+and finally the PI.
+```{r lm-point-pi}
+(PI <- predict(fm, Z0, interval = "prediction", level = 0.95))
+```
+
+
+
+
+## Grid Prediction
+
+We build a new data base,
+```{r lm-grid-data}
+(Z0 <- data.frame(cbind(regressor = seq(21, 28, by = 0.1))))
+```
+
+we compute the CIs and plot them.
+```{r lm-grid-ci}
+(CI <- predict(fm, Z0, interval = "confidence"))
+
+plot(regressor, response, asp = 1)
+lines(Z0[, 1], CI[, "fit"])
+lines(Z0[, 1], CI[, "lwr"], lty = 4)
+lines(Z0[, 1], CI[, "upr"], lty = 4)
+```
+
+
+
+
+Finally, we compute the PIs and plot them.
+```{r lm-grid-pi}
+PI <- predict(fm, Z0, interval = "prediction", level = 0.95)
+```
+
+
+```{r lm-grid-pi-plot}
+plot(regressor, response, asp = 1)
+lines(Z0[, 1], CI[, "fit"])
+lines(Z0[, 1], CI[, "lwr"], lty = 4)
+lines(Z0[, 1], CI[, "upr"], lty = 4)
+lines(Z0[, 1], PI[, "fit"])
+lines(Z0[, 1], PI[, "lwr"], lty = 2)
+lines(Z0[, 1], PI[, "upr"], lty = 2)
+```
+
+
+
+
+
+## Multiple Regression
+### Introduction
+We add all the disciplines.
+
+We plot the data,
+```{r all-plot}
+pairs(record)
+```
+
+
+then we fit the linear model.
+```{r all-lm}
+fmall <- lm(m100 ~ ., record)
+print(summary(fmall))
+```
+
+
+
+### Comparison
+Compare the models!
+```{r all-lm-compare}
+print(summary(fm))
+print(summary(fmall))
+```
+
+
+
+
+### More models
+We fit the linear model, but we remove the $m_{200}$ record from the regressors.
+```{r non200-lm}
+fm2red <- lm(m100 ~ ., record[, -2])
+print(summary(fm2red))
+```
+
+
+We also fit a linear model to predict another discipline record.
+```{r altdisc-lm}
+fmallother <- lm(Marathon ~ ., record)
+print(summary(fmallother))
+```
+
+
+
+## k-Nearest Neighbours
+### Setting
+We plot the data,
+```{r knn-data-plot}
+pairs(record)
+```
+
+set the variables,
+```{r knn-data-set}
+response <- record[, "m100"]
+regressor <- record[, "m200"]
+```
+
+plot them and att the linear regression lines for comparison.
+```{r knn-data-compare}
+plot(regressor, response)
+grid()
+abline(0, 1, lty = 3)
+
+fm <- lm(response ~ regressor)
+abline(coefficients(fm), col = "red")
+```
+
+
+
+### Computing the model
+```{r knn-fit}
+Z0 <- data.frame(cbind(regressor = seq(min(regressor), max(regressor), length = 100)))
+
+predicted.response <- kknn(response ~ regressor,
+  train = data.frame(regressor, response),
+  test = Z0,
+  k = 15, kernel = "rectangular"
+)
+```
+
+
+
+We plot the knn prediction line.
+```{r knn-fit-plot}
+plot(regressor, response)
+grid()
+abline(0, 1, lty = 3)
+fm <- lm(response ~ regressor)
+abline(coefficients(fm), col = "red")
+
+lines(Z0[, "regressor"], predicted.response$fitted.values, col = "blue")
+```
+
+
+### Tuning
+To select the value of $k$, we rely on LOO cross-validation
+```{r knn-loo}
+train.cv <- train.kknn(response ~ regressor,
+  data = data.frame(regressor, response),
+  kmax = 40, scale = F, kernel = "rectangular"
+)
+```
+
+We compare the CV errors with the responce variance.
+```{r knn-loo-check}
+plot(train.cv)
+abline(h = var(response))
+```
+
+
+
+### Exercise
+Try to change regressor and compare the results!
+```{r regression-exercise, exercise = TRUE}
+
+```
+
+
+
+
+## Prediction of the CAD/EUR exchange rate from the USD/EUR exchange rate
+
+We import the data and set the variables.
+```{r ex-data}
+exchange <- read.table(file = "../data/cambi-CAD-USD.txt", header = TRUE)
+
+response <- exchange[, "CAD"]
+regressor <- exchange[, "USD"]
+```
+
+
+We plot the data.
+```{r ex-plot}
+plot(regressor, response, asp = 1)
+grid()
+abline(0, 1, lty = 3)
+```
+
+
+### Fit LM and diagnostics
+Fit a linear model
+```{r ex-lm}
+fm <- lm(response ~ regressor)
+summary(fm)
+```
+
+Plot the regression line and the fitted vaues
+```{r ex-lm-plot}
+plot(regressor, response, asp = 1)
+grid()
+abline(0, 1, lty = 3)
+abline(coefficients(fm), col = "red")
+points(regressor, fitted(fm), col = "red", pch = 16)
+```
+
+Create a qq-plot of the residuals
+```{r ex-lm-qqplot}
+qqnorm(residuals(fm))
+```
+
+Perform a Normality test of the residuals
+```{r ex-lm-normality}
+shapiro.test(residuals(fm))
+```
+
+Compute CI of the regression coefficients
+```{r ex-lm-ci}
+confint(fm, level = 0.95)
+```
+
+Print the estimate of the error variance
+```{r ex-lm-error-variance}
+s2 <- sum(residuals(fm)^2) / fm$df
+sqrt(s2)
+```
+
+Plot the residuals vs regressor
+```{r ex-lm-residuals-vs-regressor}
+plot(regressor, residuals(fm))
+abline(h = 0)
+```
+
+
+
+## Switch to Logs
+We switch to daily log returns
+```{r log-data}
+logreturn.CAD <- log(exchange[-1, "CAD"] / exchange[-length(exchange[, "CAD"]), "CAD"])
+logreturn.USD <- log(exchange[-1, "USD"] / exchange[-length(exchange[, "USD"]), "USD"])
+
+response <- logreturn.CAD
+regressor <- logreturn.USD
+```
+
+
+
+We plot the data,
+```{r log-plot}
+plot(regressor, response, asp = 1)
+grid()
+abline(0, 1, lty = 3)
+```
+fit a linear model,
+```{r log-lm}
+fmlog <- lm(response ~ regressor)
+summary(fmlog)
+```
+plot the regression line and the fitted values,
+```{r log-lm-plot}
+plot(regressor, response, asp = 1)
+grid()
+abline(0, 1, lty = 3)
+abline(coefficients(fmlog), col = "red")
+points(regressor, fitted(fmlog), col = "red", pch = 16)
+```
+create a qq-plot of the residuals,
+```{r log-lm-qqplot}
+qqnorm(residuals(fmlog))
+```
+perform a Normality test of the residuals,
+```{r log-lm-normality}
+shapiro.test(residuals(fmlog))
+```
+compute the CI of the regression coefficients,
+```{r log-lm-ci}
+confint(fmlog, level = 0.95)
+```
+print the estimate of the error variance,
+```{r log-lm-var}
+s2 <- sum(residuals(fmlog)^2) / fm$df
+sqrt(s2)
+```
+plot the residuals vs regressor.
+```{r log-lm-residuals-regressor}
+plot(regressor, residuals(fmlog))
+abline(h = 0)
+```
+
+
+
+
+## Compare predictions
+We compare the results and plot the outcome.
+```{r log-compar}
+CAD <- exchange[-1, "CAD"]
+USD <- exchange[-1, "USD"]
+
+logreturn.CAD <- log(exchange[-1, "CAD"] / exchange[-length(exchange[, "CAD"]), "CAD"])
+logreturn.USD <- log(exchange[-1, "USD"] / exchange[-length(exchange[, "USD"]), "USD"])
+
+CADfit <- fitted(fm)[-1]
+CADfitlog <- exchange[-length(CAD), "CAD"] * exp(fitted(fmlog))
+```
+```{r log-compar-plot-points}
+plot(USD, CAD)
+points(USD, CADfit, pch = 16, col = "red")
+points(USD, CADfitlog, pch = 16, col = "green")
+```
+```{r log-compar-plot-box}
+boxplot(cbind(CAD - CADfit, CAD - CADfitlog), main = "Prediction errors")
+```
+
+
+
+
+## k-Nearest Neighbours
+### Setting
+We set the variables, plot the data and add the linear regression line as a comparison.
+```{r ex-knn-data}
+response <- CAD
+regressor <- USD
+```
+
+```{r ex-knn-plot}
+plot(regressor, response)
+grid()
+abline(0, 1, lty = 3)
+```
+
+```{r ex-knn-plot-comp}
+plot(regressor, response)
+grid()
+abline(0, 1, lty = 3)
+fm <- lm(response ~ regressor)
+abline(coefficients(fm), col = "red")
+```
+
+
+
+### Fitting
+
+We fit
+```{r ex-knn-fit}
+Z0 <- data.frame(cbind(regressor = seq(min(regressor), max(regressor), length = 100)))
+
+predicted.response <- kknn(response ~ regressor,
+  train = data.frame(regressor, response),
+  test = Z0,
+  k = 16, kernel = "rectangular"
+)
+```
+
+and plot.
+```{r ex-knn-fit-plot}
+plot(regressor, response)
+grid()
+abline(0, 1, lty = 3)
+fm <- lm(response ~ regressor)
+abline(coefficients(fm), col = "red")
+lines(Z0[, "regressor"], predicted.response$fitted.values, col = "blue")
+```
+
+
+
+
+
+### Tuning
+We set $k$ via LOO cross-validation.
+```{r ex-knn-loo}
+train.cv <- train.kknn(response ~ regressor,
+  data = data.frame(regressor, response),
+  kmax = 40, scale = F, kernel = "rectangular"
+)
+```
+
+And we compare CV errors with the response variance.
+```{r ex-knn-loo-plot}
+plot(train.cv)
+abline(h = var(response))
+```
+
+
+
+
+### Compare prediction
+We compare predictions.
+```{r ex-knn-compare}
+predicted.response.withinsample <- kknn(response ~ regressor,
+  train = data.frame(regressor, response),
+  test = data.frame(regressor),
+  k = 16, kernel = "rectangular"
+)
+```
+```{r ex-knn-compare-boxplot}
+boxplot(cbind(CAD - CADfit, CAD - CADfitlog, CAD - predicted.response.withinsample$fitted.values), main = "Prediction errors")
+
+```

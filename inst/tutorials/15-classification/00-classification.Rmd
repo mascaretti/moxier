@@ -1,0 +1,363 @@
+---
+title: "Classification - Cytokine"
+author: "Andrea Mascaretti"
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(learnr)
+knitr::opts_chunk$set(echo = TRUE, exercise = FALSE)
+```
+
+
+# Classification
+
+## Loading libraries and data
+First of all load the relevant libraries.
+```{r load-libraries}
+library(MASS)
+library(class)
+library(kknn)
+library(rpart)
+library(latex2exp)
+```
+
+We also load the data into memory.
+```{r load-data}
+df <- read.table(file = "../data/cytokine.txt", header = TRUE)
+warning("Double check the dimensions of the data set")
+```
+
+
+We consider to classes and one feature.
+```{r preprocess}
+feature_1 <- df$Infg
+group <- df$group
+group_1 <- which(df$group == "A")
+group_2 <- which(df$group == "B")
+```
+
+Let us check the numerosities.
+```{r numerosity}
+(n_1 <- length(group_1))
+(n_2 <- length(group_2))
+n <- n_1 + n_2
+```
+
+
+## Linear Discrimant Analysis
+### Hypotheses
+We make the following hypothesis:
+
+
+  - $feature_{1} | group_{1} \sim \mathcal{N}\left(\mu_{1}, \sigma_{1}^{2}\right)$
+  - $feature_{1} | group_{2} \sim \mathcal{N}\left(\mu_{2}, \sigma_{2}^{2}\right)$
+  - $\sigma_{1}^{2} = \sigma_{2}^{2}$
+ 
+We estimate the prior probabilities of both groups.
+```{r prior-prob}
+prior_1 <- n_1 / n
+prior_2 <- n_2 / n
+```
+
+
+
+
+
+### Conditional distributions
+The mean:
+```{r mean}
+mu_1 <- mean(feature_1[group_1])
+mu_2 <- mean(feature_1[group_2])
+```
+
+The variance:
+```{r variance}
+sigma_1 <- var(feature_1[group_1])
+sigma_2 <- var(feature_1[group_2])
+sigma <- ((n_1-1) * sigma_1 + (n_2-1) * sigma_2) / (n_1 + n_2 - 2)
+```
+
+
+
+
+
+### Plot conditional distributions
+We plot the conditional distributions to grasp the differences.
+```{r plot-condition}
+x <- seq(from = min(feature_1), to = max(feature_1), length.out = 100)
+
+plot(x, prior_1 * dnorm(x, mu_1, sqrt(sigma)), type='l', col='blue', ylab=TeX('$\\widehat{P}_{i} \\times f_{i} (x)$'), main='LDA - Prior')
+points(x, prior_2 * dnorm(x, mu_2, sqrt(sigma)), type='l', col='red')
+points(feature_1[group_1], rep(0, n_1), pch=16, col='blue')
+points(feature_1[group_2], rep(0, n_2), pch=16, col='red')
+legend(-10, 0.03, legend=TeX(c('$P_{1} \\times f(x|1)$', '$P_{2} \\times f(x|2)$')), col=c('blue','red'), lty=1)
+```
+
+```{r plot-condition-posterior}
+plot(x, prior_1 * dnorm(x, mu_1, sqrt(sigma)) / (prior_1 * dnorm(x, mu_1, sqrt(sigma)) + prior_2 * dnorm(x, mu_2, sqrt(sigma))), type='l', col='blue', ylab='Estimated Posterior')
+points(x, prior_2 * dnorm(x, mu_2, sqrt(sigma)) / (prior_1 * dnorm(x, mu_1, sqrt(sigma)) + prior_2 * dnorm(x, mu_2, sqrt(sigma))), type='l', col='red')
+points(feature_1[group_1], rep(0, n_1), pch=16, col='blue')
+points(feature_1[group_2], rep(0, n_2), pch=16, col='red')
+legend(-10, 0.9, legend=TeX(c('$P(1|X=x)$', '$P(2|X=x)$')), col=c('blue','red'), lty=1)
+```
+
+
+
+
+## Quadratic Discriminant Analysis
+### Hypotheses:
+We now change the assumptions to:
+ - $feature_{1} | group_{1} \sim \mathcal{N}\left(\mu_{1}, \sigma_{1}^{2}\right)$
+ - $feature_{1} | group_{2} \sim \mathcal{N}\left(\mu_{2}, \sigma_{2}^{2}\right)$
+ 
+
+We plot the estimated condidtional distribution of feature_1.
+```{r plot-feature_1-qda}
+plot(x, prior_1 * dnorm(x, mu_1, sqrt(sigma_1)), type='l', col='blue', ylab=TeX('Estimated $P_i \\times f_i(x)'), main='QDA')
+points(x, prior_2 * dnorm(x, mu_2, sqrt(sigma_2)), type='l', col='red')
+points(feature_1[group_1], rep(0, n_1), pch=16, col='blue')
+points(feature_1[group_2], rep(0, n_2), pch=16, col='red')
+legend(-10, 0.028, legend=TeX(c('P_1 \\times f(x|1)', 'P_2 \\times f(x|2)')), col=c('blue','red'), lty=1)
+```
+
+We also plot the posterior probabilities of the groups.
+```{r plot-feature_1-posterior-qda}
+plot(x, prior_1 * dnorm(x, mu_1, sqrt(sigma_1)) / (prior_1 * dnorm(x, mu_1, sqrt(sigma_1)) + prior_2 * dnorm(x, mu_2, sqrt(sigma_2))), type='l', col='blue', ylab='Estimated Posterior')
+points(x, prior_2 * dnorm(x, mu_2, sqrt(sigma_2)) / (prior_1 * dnorm(x, mu_1, sqrt(sigma_1)) + prior_2 * dnorm(x, mu_2, sqrt(sigma_2))), type='l', col='red')
+points(feature_1[group_1], rep(0, n_1), pch=16, col='blue')
+points(feature_1[group_2], rep(0, n_2), pch=16, col='red')
+legend(-10, 0.9, legend=c('P(1|X=x)', 'P(2|X=x)'), col=c('blue','red'), lty=1)
+```
+
+
+
+
+
+## Built-in functions
+### Introduction and plots
+Let us fit the models.
+```{r fit-lda-qda}
+lda_fit <- lda(group ~ feature_1)
+qda_fit <- qda(group ~ feature_1)
+```
+
+We also estimate the posterior group probabilities provided by the two models for a subject with Infg equals to zero.
+```{r predict}
+predict(lda_fit, data.frame(feature_1 = 0))
+predict(qda_fit, data.frame(feature_1 = 0))
+```
+
+
+We estimate the posterior probabilities on a regular grid provided by the models.
+```{r predict-grid}
+x <- data.frame(feature_1=seq(min(feature_1), max(feature_1), length=100))
+lda_posterior <- predict(lda_fit, x)$posterior
+qda_posterior <- predict(qda_fit, x)$posterior
+```
+
+We also plot the posteriors.
+```{r plot-grid}
+# Plot the estimated probabilities according to LDA
+# LDA Group 1
+plot(x[,1], lda_posterior[,1], type='l', col='blue', xlab='x', ylab='estimated posterior')
+# LDA Group 2
+points(x[,1], lda_posterior[,2], type='l', col='red')
+
+# Overplot the estimated probabilities according to QDA
+# QDA Group 1
+points(x[,1], qda_posterior[,1], type='l', col='blue', lty=2, xlab='x', ylab='estimated posterior')
+# QDA Group 2
+points(x[,1], qda_posterior[,2], type='l', col='red', lty=2)
+```
+
+
+
+
+
+## K-Nearest Neighbour Classifier
+
+We fit the model on a regular grid.
+```{r knn-fit}
+x <- data.frame(feature_1=seq(min(feature_1), max(feature_1), length=100))
+knn.fitted <- knn(train = feature_1, test = x, cl = group, k = 3, prob=T)
+```
+
+To select the value of $k$, we employ a leave-one-out cross-validation method.
+```{r knn-loo}
+train.cv <- train.kknn(group ~ feature_1, data = data.frame(feature_1, group), 
+                       kmax = 10, scale = F, kernel = 'rectangular')
+plot(train.cv)
+```
+
+
+
+
+
+## CART
+
+We fit the model
+```{r cart-fit}
+rpart.fit <- rpart(group ~ feature_1)
+
+```
+
+and estimate the posterior group probabilities for a subject with $Infg = 0$.
+```{r cart-posterior-infg-null}
+predict(rpart.fit, data.frame(feature_1 = 0))
+```
+
+We also estimate posterior probabilities on a regulard grid.
+```{r cart-posterior-grid}
+x <- data.frame(feature_1=seq(min(feature_1), max(feature_1), length=100))
+head(predict(rpart.fit, x))
+```
+
+
+
+
+## Multivariate Case
+### QDA
+We are going to consider three groups and four features: `Sepal.Length`, `Sepal.Width`, `Petal.Length` and `Petal.Width`.
+```{r iris-data}
+group     <- iris[,'Species']
+features  <- iris[,1:4]
+pairs(features, col = group)
+```
+
+We fit the QDA model
+```{r iris-qda}
+qda.fit <- qda(group ~ . , features)
+```
+
+We predict the posterior group probabilities for a flower with `Sepal.Length` $= 6.5$, `Sepal.Width` $= 2.5$, `Sepal.Width` $= 2.5$, `Petal.Length` $= 5$, `Petal.Width` $= 1.5$. 
+```{r iris-predict-flower}
+predict(qda.fit, data.frame(Sepal.Length = 6.5, Sepal.Width = 2.5, Petal.Length = 5, Petal.Width = 1.5))
+```
+
+We also predict posterior probabilities for the flowers in the original dataset.
+```{r iris-predict}
+head(data.frame(predict(qda.fit)))
+```
+
+
+From this, we compute the confusion matrix.
+```{r iris-confusion}
+kable(table(True.class = group, Predicted.class = predict(qda.fit)$class))
+```
+
+
+We also report the *(apparent)* Accuracy and Error Rate
+```{r iris-accuracy-error-rate}
+(Conf <- table(True.class = group, Predicted.class = predict(qda.fit)$class))
+(Accuracy <- sum(diag(Conf)) / sum(Conf))
+(ErrorRate <- 1 - Accuracy)
+```
+
+
+
+
+
+### Accuracy and Error Rate: LOO CV
+
+We report the confusion matrix
+```{r iris-confusion-matrix-loo}
+kable(table(True.class = group, Predicted.class = predict(qda.fit, method = "looCV")$class))
+```
+
+And the (apparent) Accuracy and Error Rate
+```{r iris-accuracy-error-rate-loo}
+(ConfCV <- table(True.class = group, Predicted.class = predict(qda.fit, method = "looCV")$class))
+(AccuracyCV <- sum(diag(ConfCV)) / sum(ConfCV))
+(ErrorRateCV <- 1 - AccuracyCV)
+```
+
+
+
+
+### k-neareast neighbour classifier
+We fit the model
+```{r iris-knn}
+group <- iris[, "Species"]
+features <- iris[, 1:4]
+
+knn.fitted <- knn(train = features, test = features, cl = group, k = 20, prob = T)
+```
+
+We predict the posterior group probabilities for a flower with `Sepal.Length` $= 6.5$, `Sepal.Width` $= 2.5$, `Sepal.Width` $= 2.5$, `Petal.Length` $= 5$, `Petal.Width` $= 1.5$.
+```{r iris-knn-flower}
+knn.fitted <- knn(train = features, test = data.frame(Sepal.Length = 6.5, Sepal.Width = 2.5, Petal.Length = 5, Petal.Width = 1.5), cl = group, k = 20, prob = T)
+```
+
+We select the value of $k$ by means of leave-one-out cross validation method.
+```{r iris-knn-loo}
+train.cv <- train.kknn(group ~ .,
+  data = data.frame(features, group),
+  kmax = 50, scale = F, kernel = "rectangular"
+)
+plot(train.cv)
+```
+
+
+We compute the confusion matrix,
+```{r iris-knn-confusion}
+knn.fitted <- knn(train = features, test = features, cl = group, k = train.cv$best.parameters$k, prob = T)
+kable(table(True.class = group, Predicted.class = knn.fitted))
+```
+
+
+the (apparent) accuracy and error rate
+```{r iris-knn-accuracy-error-rate}
+(Conf <- table(True.class = group, Predicted.class = knn.fitted))
+(Accuracy <- sum(diag(Conf)) / sum(Conf))
+(ErrorRate <- 1 - Accuracy)
+```
+
+
+
+
+## CART
+
+
+We fit the model
+```{r iris-cart}
+group <- iris[, "Species"]
+features <- iris[, 1:4]
+rpart.fit <- rpart(group ~ ., data = features)
+```
+
+and we plot the results
+```{r iris-cart-plot}
+plot(rpart.fit)
+text(rpart.fit)
+```
+
+
+We predict the posterior group probabilities for a flower with `Sepal.Length` $= 6.5$, `Sepal.Width` $= 2.5$, `Sepal.Width` $= 2.5$, `Petal.Length` $= 5$, `Petal.Width` $= 1.5$.
+```{r iris-cart-flower}
+predict(rpart.fit, data.frame(Sepal.Length = 6.5, Sepal.Width = 2.5, Petal.Length = 5, Petal.Width = 1.5))
+```
+
+
+We also estimate the probabilities of the original dataset.
+```{r iris-cart-data}
+head(predict(rpart.fit))
+```
+
+
+We compute the confusion matrix
+```{r iris-cart-confusion-matrix}
+kable(table(True.class = group, Predicted.class = predict(rpart.fit, type = "class")))
+```
+
+and we plot the (apparent) accuracy and error rate.
+```{r iris-cart-accuracy-error-rate}
+(Conf <- table(True.class = group, Predicted.class = predict(rpart.fit, type = "class")))
+(Accuracy <- sum(diag(Conf)) / sum(Conf))
+(ErrorRate <- 1 - Accuracy)
+```

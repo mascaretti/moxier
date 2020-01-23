@@ -1,0 +1,20 @@
+The Gini coefficient was developed to measure the degree of concentration (inequality) of a variable in a distribution of its elements.
+
+## Load and attach income (and metadata) set from Ilocos, Philippines
+> data(Ilocos)
+> attach(Ilocos)
+> ## extract and rescale income for the provinces "Pangasinan" und "La Union"
+> income.p <- income[province=="Pangasinan"]/10000
+> income.u <- income[province=="La Union"]/10000
+> ## compute the Lorenz curves
+> Lc.p <- Lc(income.p)
+> Lc.u <- Lc(income.u)
+> ## plot both Lorenz curves
+> plot(Lc.p)
+> lines(Lc.u, col=2)
+
+Income metadata from surveys conducted by the Philippines' National Statistics Office.
+
+The data contains household income and metadata in one of the sixteen regions of the Philippines called Ilocos. The data comes from two of the NSO's surveys: the 1997 Family and Income and Expenditure Survey and the 1998 Annual Poverty Indicators Survey (APIS).
+
+Since the APIS only has a six month reference period, the original data were rescaled using an adjustment factor from the quarterly GDP figures that can be obtained from the major sectors.
