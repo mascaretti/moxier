@@ -1,0 +1,8 @@
+* MOXIER: List of things to do
+** Package
+*** Check dependencies
+*** Check data
+*** Check version
+*** Versioning
+** Website
+*** Installation guide
