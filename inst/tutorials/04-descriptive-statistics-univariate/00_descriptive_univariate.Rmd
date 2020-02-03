@@ -34,6 +34,9 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, exercise = FALSE)
 
 ### Introduction
 
+
+
+
 First of all, we load the required libraries.
 ```{r load-libraries}
 library(MASS)
@@ -70,6 +73,8 @@ Let us double-check the length of the dataset.
 
 
 ### Location and shape indices
+
+
 We compute some location and shape indices.
 Namely, the minimum,
 ```{r mag-min}
@@ -147,6 +152,9 @@ detach(magnesio)
 
 
 ### Comparison with Normal
+
+
+
 Note what happens to the skeweness and Kurtosis indices when distributions are symmetrical or not.
 Since skewness is a measure of symmetry (more precisely, of the lack of symmetry), data sets with high kurtosis tend to have heavy tails, or outliers.
 Since Kurtosis is a measure of whether the data are heavy-tailed or light-tailed relative to a normal distribution, data sets with low kurtosis tend to have light tails, or lack of outliers.
@@ -208,6 +216,9 @@ kurtosis(dat)
 
 
 ## Example 2
+
+
+
 We now consider the `cavendish.txt` data file, from [Stigler](https://projecteuclid.org/euclid.aos/1176343997). It consists of $29$ measurements of earth density, carried out by Henry Cavendish in 1798.
 The goal is to analyse Cavendish data and detect any outlier.
 
@@ -225,6 +236,9 @@ attach(caven)
 
 
 ### Location and shape indices
+
+
+
 We compute some location and shape indices.
 Namely, the minimum,
 ```{r caven-min}
@@ -308,7 +322,11 @@ Notice the plot below the lower whisker.
 
 
 
+
 ### Outliers Identification
+
+
+
 We try to identify potential outliers.
 ```{r caven-outliers}
 Density[which(Density < q1 - 1.5 * iqr)]
@@ -344,6 +362,9 @@ length(new_density)
 
 ### Comparison among location and shape indices after removing the outlier.
 
+
+
+
 We compare location and shape indices *before* and *after* the removal of the outlier.
 Robust indices do not change a lot.
 ```{r new-caven-robust-compare}
@@ -378,6 +399,10 @@ detach(caven)
 
 
 ## Exercise I
+
+
+
+
 Repeat the previous analysis on the dataset `serum.txt`:
 
     * Compute suitable location and dispersion indices
@@ -403,6 +428,10 @@ data("serum")
 
 
 ## Example 3
+
+
+
+
 
 We now turn our attention to a third dataset, as found in [Mackowiak and Wasserman](https://www.ncbi.nlm.nih.gov/pubmed/1302471).
 The dataset comprises 130 tri-variate observations:
@@ -489,6 +518,9 @@ IQR(Temperatura)
 
 
 ### Graphical Representations
+
+
+
 We make a histogram
 ```{r temp-hist}
 hist(Temperatura, prob = TRUE, main = "Histogram", xlab = "body temperature [°F]", ylab = "density")
@@ -511,6 +543,9 @@ boxplot(Temperatura, horizontal = FALSE, main = "Boxplot", ylab = "body temperat
 
 
 ### Comparison
+
+
+
 
 To aid us with the analysis, we use the `tapply()` function.
 It takes three main arguments:
@@ -557,6 +592,8 @@ Q3 - Q1
 
 
 **Exercise**
+
+
 Compute the $90^{\mathrm{th}}$ quantile for the variable `Temperatura` using the `tapply()` command.
 ```{r temp-gender-quantile-90, exercise = TRUE}
 
@@ -581,6 +618,9 @@ Q_90
 
 
 ### Graphical Representation
+
+
+
 We now make some histrograms.
 
 
@@ -594,6 +634,8 @@ We now make some histrograms.
 
 
 ### Flank Histograms
+
+
 ```{r temp-gender-flank-histo}
 par(mfrow = c(1, 2)) # to make partition of the graph window
 hist(Temperatura[Sesso == "D"],
@@ -616,6 +658,8 @@ hist(Temperatura[Sesso == "U"],
 
 
 ### Overlap Histograms
+
+
 ```{r temp-gender-overlap}
 par(mfrow = c(1, 2))
 hist(Temperatura[Sesso == "D"],
@@ -645,7 +689,10 @@ hist(Temperatura[Sesso == "D"],
 
 
 
+
 ### ggplot
+
+
 ```{r temp-gender-ggplot2}
 temp %>%
         tibble() %>%
@@ -664,12 +711,16 @@ temp %>%
 
 ### BOXPLOTS
 
+
+
 We now turn our attention to boxplots.
 
 
 
 
 ### Basic Boxplot
+
+
 ```{r temp-gender-boxplot-basic}
 boxplot(Temperatura ~ Sesso,
   data = temp, horizontal = FALSE, main = "Boxplot", names = c("Donne", "Uomini"), col = c("pink", "lightblue"),
@@ -690,6 +741,9 @@ boxplot(Temperatura ~ Sesso,
 
 
 ### ggplot Boxplot
+
+
+
 ```{r temp-gender-boxplot-ggplot}
 temp %>%
         tibble() %>%
@@ -710,6 +764,9 @@ temp %>%
 
 
 ### Conclusion
+
+
+
 To conclude, we detach the data.
 ```{r temp-detac}
 detach(temp)
