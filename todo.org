@@ -1,8 +1,30 @@
-* MOXIER: List of things to do
-** Package
-*** Check dependencies
-*** Check data
-*** Check version
-*** Versioning
-** Website
-*** Installation guide
+#+AUTHOR:Andrea Mascaretti
+#+EMAIL:andrea.mascaretti@polimi.it
+#+TITLE:Moxier
+
+
+* MOXIER
+** TODO Porting to package [0/21]
+*** TODO 00-introduction-installing-r
+*** TODO 01-introduction-programming-r
+*** TODO 02-data-visualisations-graphics
+*** TODO 03-data-visualisations-ggplot2
+*** TODO 04-descriptive-statistics-univariate
+*** TODO 05-descriptive-statistics-depth-measures
+*** TODO 06-descriptive-statistics-multivariate
+*** TODO 07-descriptive-statistics-curse-dimensionality
+*** TODO 08-dimensionality-reduction-pca
+*** TODO 09-dimensionality-reduction-pca
+*** TODO 10-dimensionality-reduction-pca
+*** TODO 11-hypotheses-test-anova
+*** TODO 12-hypotheses-test-anova
+*** TODO 13-linear-regression
+*** TODO 14-linear-regression
+*** TODO 15-classification
+*** TODO 16-classification
+*** TODO 17-clustering
+*** TODO 18-clustering
+*** TODO 19-clustering
+*** TODO 20-extra-introduction-dplyr
+** TODO Website [0%]
+*** TODO Read [[https://pkgdown.r-lib.org/][pkgdown]] documentation
