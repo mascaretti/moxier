@@ -16,7 +16,22 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, exercise = FALSE)
 
 
 # Univariate Descriptive
+
+
+
+
+
+
 ## Example 1
+
+
+
+
+
+
+
+
+
 ### Introduction
 
 First of all, we load the required libraries.
@@ -42,6 +57,13 @@ Let us double-check the length of the dataset.
 ```{r mag-length-data}
 (n <- length(magnesio$Magnesio))
 ```
+
+
+
+
+
+
+
 
 
 
@@ -117,6 +139,13 @@ detach(magnesio)
 
 
 
+
+
+
+
+
+
+
 ### Comparison with Normal
 Note what happens to the skeweness and Kurtosis indices when distributions are symmetrical or not.
 Since skewness is a measure of symmetry (more precisely, of the lack of symmetry), data sets with high kurtosis tend to have heavy tails, or outliers.
@@ -171,6 +200,13 @@ kurtosis(dat)
 
 
 
+
+
+
+
+
+
+
 ## Example 2
 We now consider the `cavendish.txt` data file, from [Stigler](https://projecteuclid.org/euclid.aos/1176343997). It consists of $29$ measurements of earth density, carried out by Henry Cavendish in 1798.
 The goal is to analyse Cavendish data and detect any outlier.
@@ -179,6 +215,13 @@ The goal is to analyse Cavendish data and detect any outlier.
 data("caven")
 attach(caven)
 ```
+
+
+
+
+
+
+
 
 
 ### Location and shape indices
@@ -258,6 +301,13 @@ Notice the plot below the lower whisker.
 
 
 
+
+
+
+
+
+
+
 ### Outliers Identification
 We try to identify potential outliers.
 ```{r caven-outliers}
@@ -280,6 +330,13 @@ Check the lengths!
 length(Density)
 length(new_density)
 ```
+
+
+
+
+
+
+
 
 
 
@@ -313,6 +370,13 @@ detach(caven)
 
 
 
+
+
+
+
+
+
+
 ## Exercise I
 Repeat the previous analysis on the dataset `serum.txt`:
 
@@ -326,6 +390,13 @@ Data are taken from [[Bland]](https://global.oup.com/academic/product/an-introdu
 data("serum")
 ```
  
+
+
+
+
+
+
+
 
 
 
@@ -410,6 +481,13 @@ IQR(Temperatura)
 
 
 
+
+
+
+
+
+
+
 ### Graphical Representations
 We make a histogram
 ```{r temp-hist}
@@ -421,6 +499,13 @@ and a boxplot.
 ```{r temp-boxplot}
 boxplot(Temperatura, horizontal = FALSE, main = "Boxplot", ylab = "body temperature [°F]", ylim = c(96, 101))
 ```
+
+
+
+
+
+
+
 
 
 
@@ -488,8 +573,22 @@ Q_90
 
 
 
+
+
+
+
+
+
+
 ### Graphical Representation
 We now make some histrograms.
+
+
+
+
+
+
+
 
 
 
@@ -506,6 +605,13 @@ hist(Temperatura[Sesso == "U"],
   ylab = "Density", col = "lightblue", xlim = range(Temperatura), breaks = seq(96, 101, .25), ylim = c(0, 1)
 )
 ```
+
+
+
+
+
+
+
 
 
 
@@ -532,6 +638,13 @@ hist(Temperatura[Sesso == "D"],
 
 
 
+
+
+
+
+
+
+
 ### ggplot
 ```{r temp-gender-ggplot2}
 temp %>%
@@ -539,6 +652,13 @@ temp %>%
         ggplot() +
         geom_density(mapping = aes(Temperatura, fill = Sesso), alpha = 0.2)
 ```
+
+
+
+
+
+
+
 
 
 
@@ -562,6 +682,13 @@ boxplot(Temperatura ~ Sesso,
 
 
 
+
+
+
+
+
+
+
 ### ggplot Boxplot
 ```{r temp-gender-boxplot-ggplot}
 temp %>%
@@ -572,6 +699,13 @@ temp %>%
         scale_y_continuous(name = "Temperature [°F]")
 
 ```
+
+
+
+
+
+
+
 
 
 
