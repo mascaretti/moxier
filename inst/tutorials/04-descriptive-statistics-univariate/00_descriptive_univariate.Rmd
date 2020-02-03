@@ -350,10 +350,11 @@ The goals of the analysis are to:
 
 ```{r temp-data}
 data("temp")
+attach(temp)
 dim(temp)
 dimnames(temp)
 temp
-attach(temp)
+
 
 n <- length(Temperatura)
 ```
