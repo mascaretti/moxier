@@ -43,4 +43,6 @@ Imports:
     crayon,
     crosstalk,
     curl,
-    dplyr
+    dplyr,
+    moments,
+    plotrix

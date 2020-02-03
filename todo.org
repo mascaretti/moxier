@@ -14,6 +14,9 @@
 - check the =DESCRIPTION= file to check if the package is loaded. It is included!
 - I wasn't loading the =ggplot2= and =dplyr= libraries. I also added =dplyr= to the required packages.
 *** TODO 04-descriptive-statistics-univariate
+**** Issues
+- Missing =moments=, =plotrix=. 
+- Data: I must move *magnesium* into the package.
 *** TODO 05-descriptive-statistics-depth-measures
 *** TODO 06-descriptive-statistics-multivariate
 *** TODO 07-descriptive-statistics-curse-dimensionality
@@ -32,3 +35,11 @@
 *** TODO 20-extra-introduction-dplyr
 ** TODO Website [0%]
 *** TODO Read [[https://pkgdown.r-lib.org/][pkgdown]] documentation
+** External Data in Packages
+I now follow [[https://r-pkgs.org/data.html][this book]] to get my head around the correct way to include data into an =R= package.
+- The directory where to put it is =/data=
+- The file should be a =.RData= file
+- It is achieved using =usethis::use_data()=
+- Raw files should be included within the =data-raw= directory.
+- Data should be documented. It is not dissimilar from documenting
+  functions. Documentations is stored in the =R= folder.
