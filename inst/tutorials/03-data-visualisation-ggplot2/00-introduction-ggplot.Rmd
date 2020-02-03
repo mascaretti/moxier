@@ -10,7 +10,6 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 library(learnr)
-if (!require(tidyverse)) {install.packages(tidyverse)}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
