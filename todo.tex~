@@ -1,0 +1,87 @@
+% Created 2020-02-03 lun 16:14
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Andrea Mascaretti}
+\date{\today}
+\title{Moxier}
+\hypersetup{
+ pdfauthor={Andrea Mascaretti},
+ pdftitle={Moxier},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 26.3 (Org mode 9.1.9)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+
+
+\section{MOXIER}
+\label{sec:org597573c}
+\subsection{{\bfseries\sffamily TODO} Porting to package [3/21]}
+\label{sec:org5f6527b}
+\subsubsection{{\bfseries\sffamily DONE} 00-introduction-installing-r}
+\label{sec:org0563b3b}
+\subsubsection{{\bfseries\sffamily DONE} 01-introduction-programming-r}
+\label{sec:org35e1cfc}
+\subsubsection{{\bfseries\sffamily DONE} 02-data-visualisations-graphics}
+\label{sec:orgd33776f}
+\subsubsection{{\bfseries\sffamily TODO} 03-data-visualisations-ggplot2}
+\label{sec:org1ce7e8c}
+\begin{itemize}
+\item \texttt{=gplot2=} not found
+\end{itemize}
+\subsubsection{{\bfseries\sffamily TODO} 04-descriptive-statistics-univariate}
+\label{sec:orge56476e}
+\subsubsection{{\bfseries\sffamily TODO} 05-descriptive-statistics-depth-measures}
+\label{sec:orgf0b9c7c}
+\subsubsection{{\bfseries\sffamily TODO} 06-descriptive-statistics-multivariate}
+\label{sec:org4737d79}
+\subsubsection{{\bfseries\sffamily TODO} 07-descriptive-statistics-curse-dimensionality}
+\label{sec:orgafefa48}
+\subsubsection{{\bfseries\sffamily TODO} 08-dimensionality-reduction-pca}
+\label{sec:org5c0eb91}
+\subsubsection{{\bfseries\sffamily TODO} 09-dimensionality-reduction-pca}
+\label{sec:orgae0a69b}
+\subsubsection{{\bfseries\sffamily TODO} 10-dimensionality-reduction-pca}
+\label{sec:org31053d1}
+\subsubsection{{\bfseries\sffamily TODO} 11-hypotheses-test-anova}
+\label{sec:orge457a86}
+\subsubsection{{\bfseries\sffamily TODO} 12-hypotheses-test-anova}
+\label{sec:orgdb1b456}
+\subsubsection{{\bfseries\sffamily TODO} 13-linear-regression}
+\label{sec:org0b1fce1}
+\subsubsection{{\bfseries\sffamily TODO} 14-linear-regression}
+\label{sec:org47d0c5e}
+\subsubsection{{\bfseries\sffamily TODO} 15-classification}
+\label{sec:orgafa7961}
+\subsubsection{{\bfseries\sffamily TODO} 16-classification}
+\label{sec:orgfda697e}
+\subsubsection{{\bfseries\sffamily TODO} 17-clustering}
+\label{sec:org2ddff2b}
+\subsubsection{{\bfseries\sffamily TODO} 18-clustering}
+\label{sec:org60c8a38}
+\subsubsection{{\bfseries\sffamily TODO} 19-clustering}
+\label{sec:org0d328e0}
+\subsubsection{{\bfseries\sffamily TODO} 20-extra-introduction-dplyr}
+\label{sec:orgd289b9f}
+\subsection{{\bfseries\sffamily TODO} Website [0\%]}
+\label{sec:org0631d3a}
+\subsubsection{{\bfseries\sffamily TODO} Read \href{https://pkgdown.r-lib.org/}{pkgdown} documentation}
+\label{sec:org44603de}
+\end{document}

@@ -18,6 +18,14 @@ knitr::opts_chunk$set(echo = TRUE)
 We now wish to learn about data visualisation. Data visualisation is a crucial part of any statistical enquiry. It allows to better understand the data by means of graphical exploration.
 In this laboratory, we are going to rely on [R for Data Science](https://r4ds.had.co.nz/data-visualisation.html), a book by Hadley Wickham and Garrett Grolemund.
 
+The first thing we ought to do is to load the library we will use.
+```{r load-library}
+library(ggplot2)
+library(dplyr)
+```
+
+
+
 
 
 ### The `mpg` data frame

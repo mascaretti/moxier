@@ -4,11 +4,15 @@
 
 
 * MOXIER
-** TODO Porting to package [0/21]
-*** TODO 00-introduction-installing-r
-*** TODO 01-introduction-programming-r
-*** TODO 02-data-visualisations-graphics
+** TODO Porting to package [3/21]
+*** DONE 00-introduction-installing-r
+*** DONE 01-introduction-programming-r
+*** DONE 02-data-visualisations-graphics
 *** TODO 03-data-visualisations-ggplot2
+**** =ggplot2=
+- =ggplot2= not found.
+- check the =DESCRIPTION= file to check if the package is loaded. It is included!
+- I wasn't loading the =ggplot2= and =dplyr= libraries. I also added =dplyr= to the required packages.
 *** TODO 04-descriptive-statistics-univariate
 *** TODO 05-descriptive-statistics-depth-measures
 *** TODO 06-descriptive-statistics-multivariate

@@ -42,4 +42,5 @@ Imports:
     corrplot,
     crayon,
     crosstalk,
-    curl
+    curl,
+    dplyr
