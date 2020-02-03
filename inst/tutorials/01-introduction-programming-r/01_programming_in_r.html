@@ -302,11 +302,11 @@ a</code></pre>
 <h3>Rolling a dice</h3>
 <p>This is very convenient for us. We are interested in selecting a random face of a die. The function <code>sample</code> is what we need.</p>
 <pre class="r"><code>sample(die)</code></pre>
-<pre><code>## [1] 5 4 3 6 1 2</code></pre>
+<pre><code>## [1] 6 2 5 3 4 1</code></pre>
 <pre class="r"><code>sample(die)</code></pre>
-<pre><code>## [1] 4 1 3 6 5 2</code></pre>
+<pre><code>## [1] 1 3 5 6 2 4</code></pre>
 <pre class="r"><code>sample(die)</code></pre>
-<pre><code>## [1] 1 2 5 4 6 3</code></pre>
+<pre><code>## [1] 1 4 3 6 5 2</code></pre>
 <p>It looks like something is out of place. We obtain an entire shuffling of the data. Maybe we need to have a closer look at the <code>sample</code> function.</p>
 </div>
 <div id="section-understanding-a-function" class="section level3">
@@ -363,13 +363,13 @@ a</code></pre>
   print(extraction)
 }
 roll()</code></pre>
+<pre><code>## [1] 4 2</code></pre>
+<pre class="r"><code>roll()</code></pre>
 <pre><code>## [1] 6 3</code></pre>
 <pre class="r"><code>roll()</code></pre>
-<pre><code>## [1] 3 2</code></pre>
+<pre><code>## [1] 5 3</code></pre>
 <pre class="r"><code>roll()</code></pre>
-<pre><code>## [1] 5 4</code></pre>
-<pre class="r"><code>roll()</code></pre>
-<pre><code>## [1] 1 4</code></pre>
+<pre><code>## [1] 1 6</code></pre>
 <p>Pretty neat, right?</p>
 </div>
 <div id="section-are-we-done" class="section level3">
@@ -408,11 +408,11 @@ number_die &lt;- 2
 print(roll(die, number_die))</code></pre>
 <pre><code>## [1] 8</code></pre>
 <pre class="r"><code>print(roll(die, number_die))</code></pre>
-<pre><code>## [1] 8</code></pre>
+<pre><code>## [1] 7</code></pre>
 <pre class="r"><code>print(roll(die, number_die))</code></pre>
-<pre><code>## [1] 8</code></pre>
+<pre><code>## [1] 5</code></pre>
 <pre class="r"><code>print(roll(die, number_die))</code></pre>
-<pre><code>## [1] 8</code></pre>
+<pre><code>## [1] 7</code></pre>
 <p>It looks great, but for a fact. Look at what happens now if we just call <code>roll</code>.</p>
 <pre class="r"><code>roll()</code></pre>
 <pre><code>## Error in sample(die, size = number_die, replace = FALSE): l&#39;argomento &quot;die&quot;  non è specificato e non ha un valore predefinito</code></pre>

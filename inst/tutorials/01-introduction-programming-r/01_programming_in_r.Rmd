@@ -16,15 +16,15 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Basic Operations in R
 
-
-
-
-
 ### Introduction
 The aim of the lab session is to teach you the basics of the R programming language. We will follow the first chapters of [Hands-On Programming with R](https://rstudio-education.github.io/hopr/) by Garret Grolemund, a free and open-source resource.
 
 
 Those who may be interested in learning more advanced topics are invited to consult [Advanced R](https://adv-r.hadley.nz/), by Hadley Wickham (another free and open-source resource) or the [official R documentation](https://cran.r-project.org/).
+
+
+
+
 
 
 ### They see me rolling...
@@ -54,6 +54,8 @@ You will notice the `[1]` that appears before you see the result. It is a way fo
 
 
 
+
+
 ### Exercise 1
 
 *Type in the R console some basic operations and observe the results*
@@ -63,6 +65,9 @@ Write the R code required to add two plus two:
 ```{r two-plus-two, exercise=TRUE}
 
 ```
+
+
+
 
 
 
@@ -264,12 +269,9 @@ die %o% die
 
 
 
+
+
 ## Functions
-
-
-
-
-
 
 
 ### Introduction to functions
