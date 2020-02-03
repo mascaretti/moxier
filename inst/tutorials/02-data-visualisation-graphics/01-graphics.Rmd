@@ -14,7 +14,11 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 
 
+
+
+
 # Graphics in R
+
 
 ## Introduction
 
@@ -36,7 +40,12 @@ We are here going to focus only on the base graphics. However, there are some al
 An interesting alternative is the [ggplot2](https://ggplot2.tidyverse.org/) package: it contains a set of function to create rather beautiful plots.
 
 
+
+
+
 ## High-Level
+
+
 
 ### The `plot` function
 
@@ -55,11 +64,16 @@ One of the function that is used most often is the `plot()` function. It is a *g
      - In this case, `df` is a data frame, `y` is an object of any kind and `expr` is a list of objects, separated by `+`. The first two forms produce distributional plots of the variables in a data frame. (first form) or of a number of named objects (second form). The third firm plots `y` against every object named in `expr`.
 
 
+
+
 **Exercise:** Experiment a bit with the iris dataset!
 ```{r high-level, exercise = TRUE}
 data("iris")
 
 ```
+
+
+
 
 
 ### Displaying multivariate data
@@ -84,9 +98,18 @@ data(iris)
 ```
 
 
+
+
+
+
 ### Display Graphics
 
 Other high-level graphics functions that are worth mentioning are `qqnorm()`, `qqline()`, `qqplot()`, `hist()`, `dotchart()`
+
+
+
+
+
 
 ### Arguments to high-level functions
 
@@ -122,6 +145,12 @@ Labels are set by using the `xlab = ` and `ylab = ` arguments. A string is expec
 ```
 
 
+
+
+
+
+
+
 ## Low-level
 
 Sometimes high-level functions are simply not enough. Low-level plotting commands were created just for that: they can be used to add extra information to the current plot.
@@ -135,6 +164,12 @@ data(iris)
 ```
 
 
+
+
+
+
+
+
 ## Interactive
 We are not going into the details of this particular set of functions. We only cover the `locator(n, type)` function. This function waits for the user to select locations on the current plot using the left mouse button. It continues until `n` points have been selected (default is 512) or another mouse button is pressed. The `type` allows for plotting at the selected point.
 An example may be `text(locator(1), "Outlier", adj=0)`, to place the label of an outlier close to the point.
@@ -146,6 +181,11 @@ data(iris)
 ```
 
 
+
+
+
+
+
 ## Graphics Parameters
 There are many graphing parameters, to change the look and feel of plots. For instance, the argument `pch = ` takes values between 0 and 25, it produces different plotting symbols (such as points). `lty =` stands for line type, `lwd = ` for line widths, `col = ` for the color of lines, texts, points and such, `cex = ` stand for character expansion.
 
@@ -155,6 +195,12 @@ data(iris)
 
 
 ```
+
+
+
+
+
+
 
 
 ## Multiple Figure Environment
