@@ -176,7 +176,7 @@ We now consider the `cavendish.txt` data file, from [Stigler](https://projecteuc
 The goal is to analyse Cavendish data and detect any outlier.
 
 ```{r caven-data}
-data(cav)
+data("caven")
 attach(caven)
 ```
 
@@ -323,7 +323,7 @@ Repeat the previous analysis on the dataset `serum.txt`:
 Data are taken from [[Bland]](https://global.oup.com/academic/product/an-introduction-to-medical-statistics-9780199589920?cc=it&lang=en&). They contain the triglyceride concentration in blood serum [mmol/l] of the umbilical cord in 282 subjects.
  
 ```{r exercise-serum}
-data(serum)
+data("serum")
 ```
  
 
@@ -349,7 +349,7 @@ The goals of the analysis are to:
 
 
 ```{r temp-data}
-data(temp)
+data("temp")
 dim(temp)
 dimnames(temp)
 temp
