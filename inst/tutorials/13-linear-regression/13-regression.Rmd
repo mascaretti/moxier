@@ -1,0 +1,411 @@
+---
+title: "Regression: Exercise 1"
+author: "Andrea Mascaretti"
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(learnr)
+knitr::opts_chunk$set(echo = TRUE, exercise = FALSE)
+```
+
+
+# Linear Regression
+## Introduction
+
+```{r import-libraries}
+library(plotly)
+library(kknn)
+```
+
+
+We begin by considering:
+
+  - $P_{II} = \beta_0 + \beta_1 P_{I} + \epsilon$
+  - $\epsilon \sim \mathcal{N}\left(0, \, \sigma^{2} \right)$
+
+We import the data.
+```{r p-load-data}
+grades <- moxier::parziali
+
+response <- grades[, "PII"]
+regressor <- grades[, "PI"]
+```
+
+
+We make a simple plot.
+```{r p-plot}
+plot(regressor, response, asp = 1)
+grid()
+abline(0, 1, lty = 3)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Linear Model
+```{r p-lm}
+fm <- lm(response ~ regressor)
+summary(fm)
+```
+
+We plot the result.
+```{r p-lm-plot}
+plot(regressor, response, asp = 1)
+grid()
+abline(0, 1, lty = 3)
+abline(coefficients(fm), col = "red")
+points(regressor, fitted(fm), col = "red", pch = 16)
+```
+
+
+
+We create a qq-plot of the residuals,
+```{r p-lm-qqplot} 
+qqnorm(residuals(fm))
+```
+
+
+perform a normality test of the residuals,
+```{r p-lm-shapiro}
+shapiro.test(residuals(fm))
+```
+
+
+print the estimates of the regression coefficients,
+```{r p-lm-coefficients}
+coefficients(fm)
+```
+
+compute the CI of the regression coefficients.
+```{r p-lm-ci-coefficients}
+kable(confint(fm, level = 0.95))
+```
+
+
+
+We are in interested in the estimate of the error variance.
+```{r p-lm-error-variance}
+s2 <- sum(residuals(fm)^2) / fm$df
+sqrt(s2)
+```
+
+We plot the residuals as opposed to the regressor.
+```{r p-lm-residuals-vs-regressor}
+plot(regressor, residuals(fm))
+abline(h = 0)
+```
+
+
+
+
+
+
+
+## Predictions
+We want to compute the CI for the mean grade in the second part of the exam of students that have passed the first part with a grade of 24.
+
+```{r p-lm-new-point}
+Z0 <- data.frame(regressor = 24)
+```
+
+We compute the CI.
+```{r p-lm-new-point-ci}
+CI <- predict(fm, Z0, interval = "confidence")
+kable(CI)
+```
+
+
+
+We now compute a PI for the grade in the second part of the exam of a student that has passes the first part with a grade of 24.
+```{r p-lm-new-point-pi}
+PI <- predict(fm, Z0, interval = "prediction", level = 0.95)
+kable(PI)
+```
+
+
+Compute a set of CIs for the mean grade in the second part of the exam of students that have passed the first part with a generic grade.
+```{r p-lm-grid}
+Z0 <- data.frame(cbind(regressor = seq(15, 33, by = 0.1)))
+```
+
+We compute the CI.
+```{r p-lm-grid-ci}
+CI <- predict(fm, Z0, interval = "confidence")
+data.frame(cbind(Z0, CI))
+```
+
+
+
+We plot the results.
+```{r p-lm-grid-ci-plot}
+plot(regressor, response, asp = 1)
+lines(Z0[, 1], CI[, "fit"])
+lines(Z0[, 1], CI[, "lwr"], lty = 4)
+lines(Z0[, 1], CI[, "upr"], lty = 4)
+```
+
+
+We compute a set of PIs for the grade in the second part of the exam of a student that has passed the first part with a generic grade.
+```{r p-lm-grid-pi}
+PI <- predict(fm, Z0, interval = "prediction", level = 0.95)
+data.frame(cbind(Z0, PI))
+```
+
+
+
+We plot the results.
+```{r p-lm-grid-pi-plot}
+plot(regressor, response, asp = 1)
+lines(Z0[, 1], CI[, "fit"])
+lines(Z0[, 1], CI[, "lwr"], lty = 4)
+lines(Z0[, 1], CI[, "upr"], lty = 4)
+lines(Z0[, 1], PI[, "fit"])
+lines(Z0[, 1], PI[, "lwr"], lty = 2)
+lines(Z0[, 1], PI[, "upr"], lty = 2)
+```
+
+
+
+
+
+
+
+
+## Multiple Regression
+We now consider the following model:
+
+  - $P_{II} = \beta_{0} + \beta_{1} P_{I} + \beta_{2} \mathrm{birthdate} + \epsilon$
+  - $\epsilon \sim \mathcal{N}\left(0, \, \sigma^2 \right)$
+  
+We import the second regressor.
+```{r mr-data}
+birthdate <- moxier::compleanni
+```
+```{r mr-set-variables}
+response <- grades[, "PII"]
+regressor1 <- grades[, "PI"]
+regressor2 <- birthdate[, "giorno"]
+```
+
+
+We plot the data.
+```{r mr-pairs-plot}
+pairs(cbind(response, regressor1, regressor2))
+```
+
+```{r mr-3d-scatterplot}
+p <- plot_ly(data.frame(response, regressor1, regressor2), x = ~regressor1, y = ~regressor2, z = ~response) %>%
+  add_markers() %>%
+  layout(scene = list(xaxis = list(title = 'Grade PI'),
+                     yaxis = list(title = 'Birthdate'),
+                     zaxis = list(title = 'Grade PII')))
+p
+```
+
+
+
+And we display the fitted model.
+```{r mr-3d-plane}
+# Model ---------------
+fm2 <- lm(response ~ regressor1 + regressor2)
+summary(fm2)
+beta_coeff <- coefficients(fm2)
+z_fit = fitted(fm2)
+
+# Plane ---------------
+grid_plot <- data.frame(expand.grid(regressor1, regressor2))
+z_grid <- apply(X = grid_plot, MARGIN = 1, FUN = function(x) beta_coeff[1] + beta_coeff[2:3] %*% x)
+plane_data <- cbind(grid_plot, z_grid)
+colnames(plane_data) <- c("regressor1", "regressor2", "z_grid")
+
+# Plot --------------
+trace1 <- list(
+    mode = "markers", 
+    name = "Data", 
+    type = "scatter3d", 
+    x = regressor1, 
+    y = regressor2, 
+    z = response
+    )
+
+trace2 <- list(
+  mode = "markers",
+  name = "Fitted Z",
+  type = "scatter3d",
+  x = regressor1,
+  y = regressor2,
+  z = z_fit
+)
+
+trace3 <- list(
+    name = "Plane of Best Fit",
+    type = "surface",
+    x = matrix(data = plane_data$regressor1, nrow=as.integer(sqrt(length(plane_data$regressor1))), ncol=as.integer(sqrt(length(plane_data$regressor1)))), 
+    y = matrix(data = plane_data$regressor2, nrow=as.integer(sqrt(length(plane_data$regressor1))), ncol=as.integer(sqrt(length(plane_data$regressor1)))), 
+    z = matrix(data = plane_data$z_grid, nrow=as.integer(sqrt(length(plane_data$regressor1))), ncol=as.integer(sqrt(length(plane_data$regressor1)))), 
+    opacity = 0.2, 
+    showscale = FALSE,
+    colorscale = "Greys")
+
+data <- list(trace1, trace2, trace3)
+layout <- list(
+    scene = list(
+      xaxis = list(title = list(text = "P_I")), 
+      yaxis = list(title = list(text = "Birthdate")), 
+      zaxis = list(title = list(text = "P_II"))
+    ), 
+    title = list(text = "3D Plane of Best Fit"), 
+    margin = list(
+      b = 10, 
+      l = 0, 
+      r = 0, 
+      t = 100
+    )
+  )
+
+p <- plot_ly()
+p <- add_trace(p, mode=trace1$mode, name=trace1$name, type=trace1$type, x=trace1$x, y=trace1$y, z=trace1$z, marker=trace1$marker)
+p <- add_trace(p, mode=trace2$mode, name=trace2$name, type=trace2$type, x=trace2$x, y=trace2$y, z=trace2$z, marker=trace2$marker)
+p <- add_trace(p, name=trace3$name, type=trace3$type, x=trace3$x, y=trace3$y, z=trace3$z, opacity=trace3$opacity, showscale=trace3$showscale, colorscale=trace3$colorscale)
+p <- layout(p, scene=layout$scene, title=layout$title, margin=layout$margin)
+p
+```
+
+
+
+
+
+
+
+## A Third Regressor
+We now add a third `gender` regressor.
+```{r mrg-data}
+gender <- moxier::sesso
+
+response <- grades[, "PII"]
+regressor1 <- grades[, "PI"]
+regressor2 <- birthdate[, "giorno"]
+regressor3 <- gender[, "MF"]
+```
+
+
+We fit the model.
+```{r mrg-lm}
+fm3 <- lm(response ~ regressor1 + regressor2 + regressor3)
+summary(fm3)
+```
+
+
+
+
+
+
+
+
+
+
+## k-Nearest Neighbours
+
+We now compare knn with linear regression.
+
+
+### Single regressor
+We plot the data.
+```{r knn-plot}
+plot(regressor1, response, asp = 1)
+grid()
+abline(0, 1, lty = 3)
+```
+
+We add the the linear regression line as a comparison.
+```{r knn-plot-regression}
+plot(regressor1, response, asp = 1)
+grid()
+abline(0, 1, lty = 3)
+fm <- lm(response ~ regressor)
+abline(coefficients(fm), col = "red")
+```
+
+
+Compute the fitted values using $k = 4$ and the rectangular kernel.
+```{r knn-fit}
+Z0 <- data.frame(cbind(regressor1 = seq(15, 33, by = 0.1)))
+
+predicted.response <- kknn(response ~ regressor1,
+  train = data.frame(regressor1, response),
+  test = Z0,
+  k = 18, kernel = "rectangular"
+)
+```
+
+
+And finally plot the knn prediction line.
+```{r knn-plot-prediction}
+plot(regressor1, response, asp = 1)
+grid()
+abline(0, 1, lty = 3)
+fm <- lm(response ~ regressor)
+abline(coefficients(fm), col = "red")
+lines(Z0[, "regressor1"], predicted.response$fitted.values, col = "blue")
+```
+
+
+
+
+### Selecting the parameters.
+We wish to select the value of $k$ (leave-one-out crossvalidation method).
+```{r knn-k-loo}
+train.cv <- train.kknn(response ~ regressor1,
+  data = data.frame(regressor1, response),
+  kmax = 40, scale = F, kernel = "rectangular"
+)
+plot(train.cv)
+```
+
+
+And plot the CV error with the response variance.
+```{r knn-loo-plot}
+plot(train.cv)
+abline(h = var(response))
+```
+
+
+
+
+
+
+
+
+## Two regressor
+We now select the value of $k$ with two regressors with the leave-one-out cross-validation method,
+```{r knn-mr-loo}
+train.cv <- train.kknn(response ~ regressor2,
+  data = data.frame(regressor2, response),
+  kmax = 40, scale = F, kernel = "rectangular"
+)
+plot(train.cv)
+```
+
+
+And compare CV errors with the response variance.
+```{r knn-mr-loo-plot}
+plot(train.cv)
+abline(h = var(response))
+```

@@ -45,4 +45,10 @@ Imports:
     curl,
     dplyr,
     moments,
-    plotrix
+    plotrix,
+    ineq,
+    gclus,
+    scatterplot3d,
+    mvtnorm,
+    kknn,
+    latex2exp

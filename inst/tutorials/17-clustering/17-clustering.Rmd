@@ -1,0 +1,254 @@
+---
+title: "Clustering - 00"
+author: "Andrea Mascaretti"
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Clustering
+## Reading data
+As it is good practice to do, we load the required library as a first step.
+```{r load-library, exercise=FALSE}
+library(plotly)
+```
+
+First of all, we ought to import the data.
+```{r read-data, exercise=FALSE}
+df <- moxier::cleaneddata
+```
+
+We build subsets of the dataset.
+```{r build-subset, exercise=FALSE}
+df_gender <- df[, 1]
+df_country <- df[, 2]
+df_bio <- df[, 3:5]
+df_social <- df[, 6:8]
+```
+
+
+
+
+## Computing distances
+We now compute the Euclidean distances between data points.
+```{r distances, exercise=FALSE}
+distances <- dist(df_bio)
+```
+We wish to visualise them.
+```{r vis-distances, exercise=FALSE}
+image(as.matrix(distances), x=1:dim(df)[1], y=1:dim(df)[1], xlab="", ylab="")
+```
+Notice that
+```{r stats-distances}
+max(distances)
+min(distances)
+```
+
+
+
+## Means and Variances
+We compute the vectors of means,
+```{r means-vec, exercise=FALSE}
+colMeans(df_bio)
+```
+the vector of the variances,
+```{r vars-vec, exercise=FALSE}
+vapply(df_bio, var, FUN.VALUE = double(1L), na.rm = TRUE)
+```
+the total variances,
+```{r tot-var, exercise=FALSE}
+sum(vapply(df_bio, var, FUN.VALUE = double(1L), na.rm = TRUE))
+```
+the vector of the means of the `social` subset,
+```{r soc-means-vec, exercise=FALSE}
+colMeans(df_social)
+```
+the vector of the variances of the `social` subset,
+```{r soc-vars-vec, exercise=FALSE}
+vapply(df_social, var, FUN.VALUE = double(1L), na.rm = TRUE)
+```
+and the total variance of the `social` subset.
+```{r soc-tot-var, exercise=FALSE}
+sum(vapply(df_social, var, FUN.VALUE = double(1L), na.rm = TRUE))
+```
+
+
+
+## K-Means Clustering
+We now plot the data.
+```{r plot-bio, exercise = FALSE}
+plot(df_bio[, 3:2], pch=16, asp=1, xlab = colnames(df_bio)[3], ylab = colnames(df_bio)[2])
+```
+
+and we cluster.
+```{r clust-bio, exercise = FALSE}
+clust_k <- kmeans(x = df_bio[, 3:2], centers = 2)
+```
+
+We wish to inspect the result.
+```{r clust-insp, exercise = FALSE}
+clust_k$iter
+clust_k$cluster
+clust_k$size
+clust_k$centers
+clust_k$tot.withinss/dim(df_bio)[1]
+clust_k$totss/dim(df_bio)[1]
+```
+
+Inspecting graphically...
+```{r clust-plot-bio, exercise = FALSE}
+plot(df_bio[, 3:2], col=clust_k$cluster, asp = 1, pch=16, xlab = colnames(df_bio)[3], ylab = colnames(df_bio)[2])
+```
+and adding some more information
+```{r clust-plot-bio-avg, exercise = FALSE}
+plot(df_bio[, 3:2], col = clust_k$cluster, asp = 1, pch = 16, xlab = colnames(df_bio)[3], ylab = colnames(df_bio)[2])
+points(rbind(colMeans(df_bio[, 3:2])), pch = 17, col = "orange", cex = 2)
+points(clust_k$centers, pch = 17, col = 1:3, cex = 2)
+```
+
+Try to change the number of clusters and see what happens!
+```{r clust-diff-k, exercise = TRUE}
+k <- 2
+clust_k <- kmeans(x = df_bio[, 3:2], centers = k, nstart = 25)
+plot(df_bio[, 3:2], col = clust_k$cluster, asp = 1, pch = 16, xlab = colnames(df_bio)[3], ylab = colnames(df_bio)[2])
+points(rbind(colMeans(df_bio[, 3:2])), pch = 17, col = "orange", cex = 2)
+points(clust_k$centers, pch = 17, col = 1:3, cex = 2)
+
+```
+
+We also compare according to gender and country of origin.
+```{r clust-gender-country, exercise = FALSE}
+table(clust_k$cluster, df_gender)
+table(clust_k$cluster, df_country)
+```
+
+
+## Stability Check
+It is important to assess the stability of the clustering.
+```{r clust-stability, exercise = FALSE}
+within_ss <- matrix(data = NA, nrow = 1000, ncol = 10)
+for (iter in seq.int(from = 1, to = 1000)) {
+  for (k in seq.int(from = 1, to = 10)) {
+    curr_clust <- kmeans(x = df_bio, centers = k)
+    within_ss[iter, k] <- curr_clust$tot.withinss
+  }
+}
+```
+We plot the results.
+```{r plot-clust-stability, exercise = FALSE}
+boxplot(within_ss / dim(df_bio)[1], main = "Within SS")
+```
+
+
+
+## Clustering Social Covariates
+We now proceed to cluster the data considering the variables connected with *social networks*.
+
+```{r clust-social, exercise = FALSE}
+clust_social <- kmeans(x = df_social, centers = 3)
+```
+
+We plot the results.
+```{r clust-social-plot, exercise = FALSE}
+p <- plot_ly(df_social, x = ~phone, y = ~facebook, z = ~instagram, color = ~as.factor(clust_social$cluster)) %>%
+  add_markers() %>%
+  layout(scene = list(xaxis = list(title = 'Phone'),
+                     yaxis = list(title = 'Facebook'),
+                     zaxis = list(title = 'Instagram')))
+p
+```
+
+We also inspect the results
+```{r clust-social-inspect, exercise = FALSE}
+clust_social$iter
+clust_social$cluster
+clust_social$size
+clust_social$centers
+clust_social$tot.withinss/dim(df_social)[1]
+clust_social$totss/dim(df_social)[1]
+```
+
+and compare what we have obtained with gender and country data.
+```{r clust-social-gender-country, exercise = FALSE}
+table(clust_social$cluster, df_gender)
+table(clust_social$cluster, df_country)
+```
+
+
+Moreover, we check the stability of the clustering
+```{r clust-social-stability, exercise = FALSE}
+within_ss_social <- matrix(data = NA, nrow = 1000, ncol = 10)
+for (iter in seq.int(from = 1, to = 1000)) {
+  for (k in seq.int(from = 1, to = 10)) {
+    curr_clust <- kmeans(x = df_social, centers = k)
+    within_ss_social[iter, k] <- curr_clust$tot.withinss
+  }
+}
+```
+
+
+and plot the results.
+```{r clust-social-stability-boxplot, exercise = FALSE}
+boxplot(within_ss_social / dim(df_social), main = "Within SS - Social")
+```
+
+
+### Considerations
+We have to make a series on remarks on
+ - cluster instability
+ - label matching
+ - variable standardisation or rescaling
+ - k-medoids algorithms.
+
+
+ 
+### Hierarchical Agglomerative Clustering
+
+We compute the distance matrix
+```{r create-dataset, exercise = FALSE}
+d <- dist(df_bio[, 3:2])
+```
+
+and plot the results.
+```{r distance-heatmap, exercise = FALSE}
+image(as.matrix(d), x = 1:dim(df_bio)[1], y = 1:dim(df_bio)[1], xlab = "", ylab = "")
+```
+
+
+We compute and plot two different hierarchical clustering linkages.
+```{r clustering, exercise = FALSE}
+par(mfrow=c(1,2))
+
+# Average linkage
+clusta <- hclust(d, method='average')
+plot(clusta, main='average', xlab='', sub='')
+
+# Ward linkage
+clustw <- hclust(d, method='ward.D')
+plot(clustw, main='ward', xlab='', sub='')
+```
+
+
+Investigating more,
+```{r hierarchical, exercise = FALSE}
+clusta$merge
+clusta$height
+clusta$order
+```
+
+Finally, we extract the clusters.
+```{r random}
+# extracting the clusters
+clustera <- cutree(hclust(d = d, method='average'), 4)
+plot(df_bio[, 3:2], col=clustera+1, pch=16, asp=1)
+
+clusterw <- cutree(hclust(d, method='ward.D'), 3)
+plot(df_bio[, 3:2], col=clusterw+1, pch=16, asp=1)
+```

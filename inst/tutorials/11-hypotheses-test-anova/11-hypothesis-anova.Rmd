@@ -1,0 +1,357 @@
+---
+title: "HT and ANOVA: Exercise 1"
+author: "Andrea Mascaretti"
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(learnr)
+knitr::opts_chunk$set(echo = TRUE, exercise = FALSE)
+```
+
+# Hypothesis Testing and Anova
+
+## Two-Sample Z tests for comparing the means (unpaired)
+### Data Import
+We import the data
+```{r zun-data}
+t1 <- moxier::barcellona
+t2 <- moxier::milano
+
+p <- dim(t1)[2]
+n1 <- dim(t1)[1]
+n2 <- dim(t2)[1]
+```
+
+and plot them.
+```{r zun-data-plot}
+plot(rbind(t1, t2), col = c(rep("red", n1), rep("black", n2)))
+```
+
+
+
+
+### Hypothesis
+We select the level of significance
+```{r zun-alpha}
+alpha <- 0.01
+```
+
+
+and the null hypothesis.
+```{r zun-h0}
+delta.mean.H0 <- 0
+```
+
+We then compute the estimate of the difference between the means
+```{r zun-estimate-mean}
+(delta.mean.est <- mean(t1[, "Temperatura"]) - mean(t2[, "Temperatura"]))
+```
+and estimate the standard deviation (if it is not known)
+```{r zun-estimate-sd}
+(sd.est <- sqrt(var(t1[, "Temperatura"]) / n1 + var(t2[, "Temperatura"]) / n2))
+```
+We compute the Z-test statistic
+```{r zun-z}
+(zstat <- (delta.mean.est - delta.mean.H0) / sd.est)
+```
+and compute the boundaries of the rejection region.
+```{r zun-rejection-region}
+(cfr.z <- qnorm(1 - alpha / 2))
+```
+We check if this leads to the rejection of $H_{0}$ or not
+```{r zun-h0-accepted}
+abs(zstat) > cfr.z
+```
+and compute the p-value.
+```{r zun-pvalue}
+(pvalue <- ifelse(zstat >= 0, (1 - pnorm(zstat)) * 2, pnorm(zstat) * 2))
+```
+
+
+We finally compute the two-sample Z intervals for comparing the means (unpaired)
+```{r zun-z-intervals}
+CI <- c(
+  inf = delta.mean.est - sd.est * qnorm(1 - alpha / 2),
+  center = delta.mean.est,
+  sup = delta.mean.est + sd.est * qnorm(1 - alpha / 2)
+)
+kable(CI)
+```
+
+
+
+
+
+## Multivariate two-sample tests for comparing the means (unpaired)
+
+We consider a component-wise testing approach: an adjusted two-sample Z test for comparing the means (unpaired).
+
+We select the level of signficance,
+```{r muzun-alpha}
+alpha <- 0.01
+```
+the null hypothesism
+```{r muzun-h0}
+delta.mean.H0 <- c(0, 0, 0)
+```
+we compute three estimates of the three differences of the means.
+```{r muzun-estimate-mean}
+(delta.mean.est <- colMeans(t1) - colMeans(t2))
+```
+After that, we estiamte the standard deviations of the three estimates (if unkwonw),
+```{r muzun-estimate-sd}
+(sd.est <- sqrt(apply(t1, 2, var) / n1 + apply(t2, 2, var) / n2))
+```
+we compute the Z-test statistics,
+```{r muzun-z-test}
+(zstat <- (delta.mean.est - delta.mean.H0) / sd.est)
+```
+adjust the level of signficance (*e.g.* Bonferroni adjustment);
+```{r muzun-bonferroni}
+(alpha.adj <- alpha / p)
+```
+we compute the boundaries of the rejection regions,
+```{r muzun-boundaries}
+(cfr.z <- qnorm(1 - alpha.adj / 2))
+```
+check if the boundaries lead to the rejection of $H_0$ or not,
+```{r muzun-h0-boundaries}
+abs(zstat) > cfr.z
+```
+compute the p-value,
+```{r muzun-pvalue}
+(pvalue <- ifelse(zstat >= 0, (1 - pnorm(zstat)) * 2, pnorm(zstat) * 2))
+```
+the adjusted p-value,
+```{r muzun-adjusted-pvalue}
+(pvalue.adj <- pmin(pvalue * p, 1))
+```
+and finally show the adjusted two-sample Z intervals for comparing the means (unpaird) (*e.g.* Bonferroni intervals)
+```{r muzun-z-intervals}
+CI <- cbind(
+  inf = delta.mean.est - sd.est * qnorm(1 - alpha.adj / 2),
+  center = delta.mean.est,
+  sup = delta.mean.est + sd.est * qnorm(1 - alpha.adj / 2)
+)
+kable(CI)
+```
+
+
+
+
+
+## Global Testing Approach (Hotelling's test)
+We now approach the issue by using a global testing approach, namely Hotelling's test.
+
+We select the level of signficance,
+```{r ho-alpha}
+alpha <- 0.01
+```
+choose the null hypothesis (a vector in $\mathbb{R}^3$).
+```{r ho-null}
+delta.mean.H0 <- c(0, 0, 0)
+```
+compute three estimates of the the three differences of the means (again, a vector in $\mathbb{R}^3$),
+```{r ho-mean-est}
+(delta.mean.est <- colMeans(t1) - colMeans(t2))
+```
+we estimate the covariance matrix (a matrix in $\mathbb{R}^{3 \times 3}$).
+```{r ho-cov-est}
+(cov.est <- cov(t1) / n1 + cov(t2) / n2)
+```
+We then compute the $\chi^{2}$-test statistic,
+```{r ho-chi-square}
+(chi2stat <- (delta.mean.est - delta.mean.H0) %*% solve(cov.est) %*% (delta.mean.est - delta.mean.H0))
+```
+compute the boundary of the elliptical rejection region,
+```{r ho-boundaries}
+(cfr.chi2 <- qchisq(1 - alpha, p))
+```
+check if this leads to the rejection of $H_{0}$ or not
+```{r ho-H0-rejection}
+chi2stat > cfr.chi2
+```
+and compute the p-value.
+```{r ho-pvalue}
+(pvalue <- 1 - pchisq(chi2stat, p))
+```
+Moreover, we show the $\chi^2$ confide:nce region for comparing the means (unpaired). They can't be visualised whenever $p > 3$.
+We are interested in checking the shades along the three axes (*i.e.*, simultaneous confidence intervals)
+```{r ho-shades}
+CI.sim <- cbind(
+  inf = delta.mean.est - sd.est * sqrt(qchisq(1 - alpha, p)),
+  center = delta.mean.est,
+  sup = delta.mean.est + sd.est * sqrt(qchisq(1 - alpha, p))
+)
+kable(CI.sim)
+```
+
+
+
+
+
+
+
+## One-Way ANOVA
+### Introduction
+We load the data. We have $p = 1$ and $g = 6$.
+```{r chick-data}
+chickwts
+summary(chickwts)
+```
+
+
+We build the vector of responses (*e.g.* weight) and the vector of treatment levels (*e.g.* feed type)
+```{r chick-data-set}
+response <- chickwts[, "weight"]
+treatment <- chickwts[, "feed"]
+```
+
+
+We compute the sample size,
+```{r chick-sample}
+n <- length(response)
+```
+the treatment group sample sizes
+```{r chick-sample-groups}
+ng <- table(treatment)
+```
+and the number of treatments.
+```{r chick-number-treatments}
+treatment.levels <- levels(treatment)
+g <- length(treatment.levels)
+```
+
+
+
+We also plot the treatment groups.
+```{r chick-groups-boxplot}
+boxplot(response ~ treatment)
+```
+
+
+
+
+
+
+### Computing ANOVA
+
+We wish to test for the equality of the $g$ means of the treatment groups: 
+
+
+    - $H_{0}: \, \tau_{1} = \tau_{2} = \tau_{3} = \tau_{4} = 0$
+    - $H_{1}: \, H_{0}^c$
+    
+
+We compute the estimates of the $g$ means under the null hypothesis,
+```{r chick-mean-estimate-null}
+rep(mean(response), g)
+```
+
+and we compute the estimates of the six means under the alternative hypothesis.
+*Note that these are valid (albeit sub-optimal) estimates even under the null hypothesis.*
+```{r chick-mean-estimate-alternative}
+tapply(response, treatment, mean)
+```
+
+
+
+We perform the ANOVA decomposition.
+```{r chick-anova-fit}
+fit <- aov(response ~ treatment)
+summary(fit)
+```
+
+
+And we perform pairwise comparision (*e.g.* Bonferroni). We need to make $g \dot \frac{g - 1}{2}$ comparisons.
+```{r chick-comparison}
+mean.est.matrix <- matrix(NA, nrow = g, ncol = g, dimnames = list(treatment.levels, treatment.levels))
+zstat.matrix <- matrix(NA, nrow = g, ncol = g, dimnames = list(treatment.levels, treatment.levels))
+pvalue.matrix <- matrix(NA, nrow = g, ncol = g, dimnames = list(treatment.levels, treatment.levels))
+pvalue.adj.matrix <- matrix(NA, nrow = g, ncol = g, dimnames = list(treatment.levels, treatment.levels))
+for (i in 1:(g - 1)) {
+  for (j in (i + 1):g) {
+    test.ij <- t.test(response[treatment == treatment.levels[i]], response[treatment == treatment.levels[j]])
+    mean.est.matrix[i, j] <- diff(test.ij$estimate)
+    zstat.matrix[i, j] <- test.ij$statistic
+    pvalue.matrix[i, j] <- test.ij$p.value
+    pvalue.adj.matrix[i, j] <- min(test.ij$p.value * (g * (g - 1) / 2), 1)
+  }
+}
+```
+
+
+
+We now plot the pairwise estimated differences of the means,
+```{r chick-means}
+(mean.est.matrix)
+```
+the pairwise estimated test statistics,
+```{r chick-test}
+(zstat.matrix)
+```
+the pairwise p-values
+```{r chick-pvalues}
+(pvalue.matrix)
+```
+and the pairwise adjusted p-values.
+```{r chick-adjust-pvalues}
+(pvalue.adj.matrix)
+pvalue.adj.matrix < 0.05
+```
+
+
+
+
+
+
+## Two-way ANOVA
+We compute a two-way ANOVA for the following problem:
+
+    - Respone: Distance per fuel litre [km/l]
+    - Factor 1: Gasoline Supplier (0: Esso, 1: Shell)
+    - Factor 2: Gasoline Type (0: 95, 1: 98)
+    
+We set the variables.
+```{r gas-data}
+km <- c(18.7, 16.8, 20.1, 22.4, 14.0, 15.2, 22.0, 23.3)
+gaz.supplier <- factor(c("Esso", "Esso", "Esso", "Esso", "Shell", "Shell", "Shell", "Shell"))
+gaz.type <- factor(c("95", "95", "98", "98", "95", "95", "98", "98"))
+gaz.supplier.type <- factor(c("Esso95", "Esso95", "Esso98", "Esso98", "Shell95", "Shell95", "Shell98", "Shell98"))
+```
+
+
+
+We estimate the means under the hypothesis of no effect of supplier nor type.
+```{r gas-no-effect}
+(M <- mean(km))
+```
+We estimate the means under the hypothesis of no effect of type only.
+```{r gas-no-type}
+(Md.supplier <- tapply(km, gaz.supplier, mean))
+```
+We estimate the means under the hypothesis of no effect of supplier only.
+```{r gas-no-supplier}
+(M.type <- tapply(km, gaz.type, mean))
+```
+We estimate the means under the hypothesis of an effect of both supplier and type.
+```{r gas-both}
+(M.supplier.type <- tapply(km, gaz.supplier.type, mean))
+```
+
+
+And perform the analysis.
+```{r gas-anova}
+summary.aov(aov(km ~ gaz.supplier + gaz.type + gaz.supplier:gaz.type))
+
+summary.aov(aov(km ~ gaz.supplier + gaz.type))
+
+summary.aov(aov(km ~ gaz.type))
+```
+

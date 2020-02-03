@@ -16,7 +16,8 @@
 *** TODO 04-descriptive-statistics-univariate
 **** Issues
 - Missing =moments=, =plotrix=. 
-- Data: I must move *magnesium* into the package.
+- Data: I must move *magnesium* into the package. Apparently, a
+  solution may be of doing =magnesium <- moxier::magnesium"
 *** TODO 05-descriptive-statistics-depth-measures
 *** TODO 06-descriptive-statistics-multivariate
 *** TODO 07-descriptive-statistics-curse-dimensionality

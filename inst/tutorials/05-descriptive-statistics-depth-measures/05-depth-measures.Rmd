@@ -1,0 +1,392 @@
+---
+title: "Depth Measures"
+author: "Andrea Mascaretti"
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(knitr)
+data(AirPassengers)
+data(Ilocos)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, exercise = FALSE)
+```
+
+
+
+# Depth Measure: Gini Coefficient and Lorenz Curve
+
+The first thing we do is loading the required libraries.
+```{r load-libraries}
+library(ineq)
+```
+
+The [Gini coefficient](https://en.wikipedia.org/wiki/Gini_coefficient) was developed to measure the degree of concentration (inequality) of a variable in a distribution of its elements.
+
+
+## Example 1
+We are going to consider the `AirPassengers` dataset.
+It consists of the time series recording of the montly total of passengers of an international airline, collected from 1949 to 1960.
+
+```{r ap-data-show}
+AirPassengers
+```
+
+
+
+### Overall Gini
+
+We compute the overall Gini index.
+```{r ap-data}
+ineq(AirPassengers, type = "Gini")
+```
+
+We plot the results.
+```{r ap-data-lc}
+plot(Lc(AirPassengers), col = "darkred", lwd = 2)
+```
+
+
+
+
+### Concentration curves per year
+We now consider the concentration curvers per year.
+
+```{r ap-lorenz-yearly}
+year49 <- AirPassengers[1:12]
+plot(Lc(year49, plot = T), col = 1)
+for (i in 1:11) {
+  lines(Lc(AirPassengers[(i * 12 + 1):(i * 12 + 12)]), col = i + 1)
+}
+abline(0, 1, lwd = 2)
+```
+
+
+They all look very similar, but some years are closer to having an equal number of passengers per month.
+
+
+
+
+
+### Gini index per year
+We compute the Gini index per year.
+```{r ap-gini-yearly}
+YGini <- c()
+for (i in 0:11) {
+  YGini <- c(YGini, ineq(AirPassengers[(i * 12 + 1):(i * 12 + 12)], type = "Gini"))
+}
+year <- 1949:1960
+(YGini <- data.frame(Gini.Index = YGini, row.names = year))
+attach(YGini)
+```
+
+
+
+The maximum and the minimum are:
+```{r ap-gini-max-min}
+year[which(Gini.Index == min(Gini.Index))]
+year[which(Gini.Index == max(Gini.Index))]
+```
+
+
+
+We plot the index.
+```{r ap-gini-yearly-plot}
+plot(year, Gini.Index, main = "Gini Index per Year", xlab = "year", ylab = "Gini Index")
+```
+
+It looks like concentration is **increasing**.
+
+
+And we detach the data.
+```{r ap-gini-yearly-detach}
+detach(YGini)
+```
+
+
+
+
+
+
+
+## Example 2
+We are now going to consider income metadata from surveys conducted by the National Statistics Office of the Philippines. The data containes household income and metadata in one of the sixteen regions of the Philippines called Ilocos.
+The data comes from two of the NSO's surveys: 1997's "Family and Income and Expenditure Survey" and 1998's "Annual Poverty Indicators Survey" (APIS).
+Since APIS has only a six month reference period, the original data were rescaled using an adjustment factor derived from the quarterly GDP figures that can be obtained for the major sectors.
+
+
+```{r apis}
+data(Ilocos)
+attach(Ilocos)
+```
+
+
+We extract and rescale income for the provinces "Pangasinan" and "La Union".
+```{r apis-data}
+income.p <- income[province == "Pangasinan"] / 10000
+income.u <- income[province == "La Union"] / 10000
+```
+
+
+
+We compute the Lorenz curves.
+```{r apis-lorenz}
+Lc.p <- Lc(income.p)
+Lc.u <- Lc(income.u)
+```
+
+
+We plot both curves.
+```{r apis-lorenz-plot}
+plot(Lc.p)
+lines(Lc.u, col = 2)
+```
+
+
+
+
+
+
+
+## Example 3
+In this example, we simulate data to get some feeling for the Lorenz curve and Gini Index obtained from different distributions, one of which is very skewed.
+
+
+We set the seed for replicability and set the sample size.
+```{r seed}
+set.seed(050218)
+n <- 100000
+```
+
+
+
+
+### First Distribution
+We simulate the normal distribution and check if everything went alright.
+```{r normal}
+sdat <- rnorm(n, 0, 1)
+hist(sdat, breaks = "FD") 
+points(quantile(sdat, prob = seq(0, 1, .1)), rep(0, 11), col = "red", pch = 19) 
+mean(sdat)
+median(sdat)
+```
+
+
+### Second Distribution
+We simulate another distribution, taking the exponential of the previous values and then adding a drift term to stay away from $0$. Taking the exponential will squeen the distribution in the interval $[0, 1]$ and dilate that of the positive values in $[0, + \infty]$. We then inspect the result.
+
+```{r dist-two}
+inc <- exp(sdat)
+inc <- inc + 10
+```
+
+
+Let us see!
+```{r dist-two-plot}
+hist(inc, prob = T, breaks = "FD", xlim = c(0, max(inc)))
+points(quantile(inc, prob = seq(0, 1, .1)), rep(0, 11), col = "red", pch = 19)
+```
+
+
+Let us see if everything went ok: we check if the quantiles of the gaussian distribution were mapped to the quantiles of the new distribution by checking the media.
+```{r dist-two-check}
+median(inc)
+median(inc) - (exp(median(sdat)) + 10)
+```
+
+
+Also note that taking the inverse map, $\log(\mathrm{inc} - 10)$m the transformed data would have a Gaussian distribution.
+
+
+
+
+
+### Third distribution
+Now we generate a sample of size $n$: we want a Gaussian with the same mean and standard deviation as the second distribution.
+
+```{r dist-three}
+mean(inc)
+sd(inc)
+norm.inc <- rnorm(n, mean = mean(inc), sd = sd(inc))
+```
+
+
+We check the result.
+```{r dist-three-plot}
+hist(inc, prob = T, breaks = "FD", xlim = c(0, max(inc))) # plot a representation of the two distributions
+x <- seq(mean(norm.inc) - 4 * sd(norm.inc), mean(norm.inc) + 4 * sd(norm.inc), .01)
+lines(x, dnorm(x, mean = mean(norm.inc), sd = sd(norm.inc)), type = "l", col = "blue")
+legend(40, 0.5, c("inc", "norm.inc"), lwd = 1, col = c("black", "blue"))
+```
+
+
+
+
+If `inc` and `norm.inc` were incomes the total income for the two populations would almost be the same.
+```{r totals}
+sum(inc)
+sum(norm.inc)
+```
+
+
+Why? Same means, same sample sizes!
+
+
+
+
+
+
+
+### Analysis
+So, which population has a higher income concentration?
+
+```{r dist-lorenz}
+plot(Lc(inc), main = "Lorenz curve of inc")
+lines(Lc(norm.inc), col = "blue")
+legend(.05, .9, c("inc", "norm.inc"), lwd = 1, col = c("black", "blue"))
+```
+
+Even though the distribution of `inc` has a much longer right tail ("richest people are much reacher!"), for the poorest 80% it has a smaller concentration than what you would expect if the distribution were a Gaussian with same mean and standard deviation.
+
+
+
+
+```{r dist-gini}
+inc.Gini <- ineq(inc, type = "Gini")
+norm.inc.Gini <- ineq(norm.inc, type = "Gini")
+sGini <- data.frame(c(inc.Gini, norm.inc.Gini), row.names = c("inc", "norm.inc"), check.names = F)
+sGini <- rbind(inc = inc.Gini, norm.inc = norm.inc.Gini)
+dimnames(sGini)[[2]] <- c("Gini Index")
+sGini
+```
+
+
+Overall the Gaussian has a higher concentration index.
+
+
+
+
+### Uniform sample
+Consider now a sample from a uniform distribution, with the same mean and standard deviation as in.
+```{r uniform}
+uni.inc <- runif(n, min = mean(inc) - sqrt(3) * sd(inc), max = mean(inc) + sqrt(3) * sd(inc))
+
+mean(uni.inc) - mean(inc)
+sd(uni.inc) / sd(inc)
+```
+
+
+We plot the three histograms.
+```{r dists-histograms}
+hist(inc, prob = T, breaks = "FD", xlim = c(0, max(inc))) # plot a representation of the three distributions
+x <- seq(mean(norm.inc) - 4 * sd(norm.inc), mean(norm.inc) + 4 * sd(norm.inc), .01)
+lines(x, dnorm(x, mean = mean(norm.inc), sd = sd(norm.inc)), type = "l", col = "blue")
+x <- seq(mean(inc) - sqrt(3) * sd(inc), mean(inc) + sqrt(3) * sd(inc), 0.1)
+lines(x, dunif(x, mean(inc) - sqrt(3) * sd(inc), mean(inc) + sqrt(3) * sd(inc)), col = "green")
+legend(40, 0.5, c("inc", "norm.inc", "uni.inc"), lwd = 1, col = c("black", "blue", "green"))
+```
+
+
+
+In which population is income more concentrated?
+```{r dists-lorenz}
+plot(Lc(inc), main = "Lorenz curve of inc")
+lines(Lc(norm.inc), col = "blue")
+lines(Lc(uni.inc), col = "darkgreen")
+legend(.05, .9, c("inc", "norm.inc", "uni.inc"), lwd = 1, col = c("black", "blue", "darkgreen"))
+```
+
+
+
+
+### Uniform with larger variance
+Things change if we consider a uniform distribution with the same mean but a larger variance.
+
+```{r uniform-high-var}
+uni2.inc <- runif(n, min = mean(inc) - 2 * sqrt(3) * sd(inc), max = mean(inc) + 2 * sqrt(3) * sd(inc))
+```
+
+
+
+Check the differences!
+```{r uniform-high-var-comparison}
+mean(uni2.inc) - mean(inc) # to be sure, check the differences
+sd(uni2.inc) / sd(inc)
+```
+
+
+
+We plot the Lorenz curves!
+```{r dists-high-var-lorenz}
+plot(Lc(inc), main = "Lorenz curve of inc")
+lines(Lc(norm.inc), col = "blue")
+lines(Lc(uni.inc), col = "darkgreen")
+lines(Lc(uni2.inc), col = "lightgreen")
+legend(.05, .9, c("inc", "norm.inc", "uni.inc", "uni2.inc"), lwd = 1, col = c("black", "blue", "darkgreen", "lightgreen"))
+```
+
+
+
+
+Let us look at the Gini indices.
+```{r}
+uni.inc.Gini <- ineq(uni.inc, type = "Gini")
+uni2.inc.Gini <- ineq(uni2.inc, type = "Gini")
+sGini <- rbind(sGini, uni.inc = uni.inc.Gini, uni2.inc = uni2.inc.Gini)
+sGini
+```
+
+
+
+
+
+### Exponential
+Finally, let's consider an exponential distribution with the same mean as that of `inc`.
+
+```{r exp}
+exp.inc <- rexp(n, rate = 1 / mean(inc))
+```
+
+
+We make a histogram.
+```{r}
+hist(inc, prob = T, breaks = "FD", xlim = c(0, max(inc))) # plot a representation of the four distribution distributions
+x <- seq(mean(norm.inc) - 4 * sd(norm.inc), mean(norm.inc) + 4 * sd(norm.inc), .01)
+lines(x, dnorm(x, mean = mean(norm.inc), sd = sd(norm.inc)), type = "l", col = "blue")
+x <- seq(mean(inc) - sqrt(3) * sd(inc), mean(inc) + sqrt(3) * sd(inc), 0.1)
+lines(x, dunif(x, mean(inc) - sqrt(3) * sd(inc), mean(inc) + sqrt(3) * sd(inc)), col = "green")
+x <- seq(0, max(exp.inc), 0.01)
+lines(x, dexp(x, rate = 1 / mean(inc)), col = "red")
+legend(40, 0.5, c("inc", "norm.inc", "uni.inc", "exp.inc"), lwd = 1, col = c("black", "blue", "green", "red"))
+```
+
+
+And once again compare total incomes.
+```{r exp-total}
+sum(exp.inc)
+```
+
+
+
+We plot the concentration curves.
+```{r exp-lorenz}
+plot(Lc(inc), main = "Lorenz curve of inc")
+lines(Lc(norm.inc), col = "blue")
+lines(Lc(uni.inc), col = "darkgreen")
+lines(Lc(uni2.inc), col = "lightgreen")
+lines(Lc(exp.inc), col = "red")
+legend(.05, .9, c("inc", "norm.inc", "uni.inc", "uni2.inc", "exp.inc"), lwd = 1, col = c("black", "blue", "darkgreen", "lightgreen", "red"))
+```
+
+
+The exponential is much more concentrated!
+Let us have a look at Gini.
+
+```{r exp-gini}
+sGini <- rbind(sGini, exp.inc = ineq(exp.inc, type = "Gini"))
+sGini
+```
