@@ -21,26 +21,14 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, exercise = FALSE)
 # Univariate Descriptive
 
 
-
-
-
-
 ## Example 1
-
-
-
-
-
-
-
 
 
 ### Introduction
 
 
-
-
 First of all, we load the required libraries.
+
 ```{r load-libraries}
 library(MASS)
 library(plotrix)
@@ -54,22 +42,17 @@ Our goal is to analyse the data contained within the `magnesium.txt` file.
 The file contains the measurements of the quantity of magnesium [mmol/l] in the blood of 140 healthy subjects.
 
 Let us load the data.
+
 ```{r mag-load-data}
 magnesio <- moxier::magnesio
 attach(magnesio)
 ```
 
 Let us double-check the length of the dataset.
+
 ```{r mag-length-data}
 (n <- length(magnesio$Magnesio))
 ```
-
-
-
-
-
-
-
 
 
 
@@ -80,6 +63,7 @@ Let us double-check the length of the dataset.
 
 We compute some location and shape indices.
 Namely, the minimum,
+
 ```{r mag-min}
 min(Magnesio)
 ```
@@ -90,22 +74,26 @@ max(Magnesio)
 ```
 
 the mean,
+
 ```{r mag-mean}
 mean(Magnesio)
 ```
 
 the standard deviation,
+
 ```{r mag-sd}
 sqrt(var(Magnesio))
 sd(Magnesio)
 ```
 
 the range,
+
 ```{r mag-range}
 range(Magnesio)
 ```
 
 the quartiles and interquartile range,
+
 ```{r mag-quartiles}
 quantile(Magnesio, 0.25)
 quantile(Magnesio, 0.5)
@@ -116,11 +104,13 @@ IQR(Magnesio)
 ```
 
 (moments can also be computed like this:)
+
 ```{r}
 (mom <- all.moments(magnesio, central = TRUE, order.max = 4))
 ```
 
 skewness (notice that the skewnes of symmetric data is $0$),
+
 ```{r mag-skewness}
 skewness(magnesio)
 (sum((Magnesio - mean(Magnesio))^3) / n) / (sum((Magnesio - mean(Magnesio))^2) / n)^(3 / 2)
@@ -130,6 +120,7 @@ mom[3 + 1] / mom[2 + 1]^(3 / 2)
 
 
 kurtosis (and notice that the kurtosis of the normal distribution is $3$.
+
 ```{r mag-curtosis}
 kurtosis(magnesio)
 (sum((Magnesio - mean(Magnesio))^4) / n) / (sum((Magnesio - mean(Magnesio))^2) / n)^2
@@ -138,16 +129,10 @@ mom[4 + 1] / mom[2 + 1]^2
 
 
 We detach the data.
+
 ```{r mag-detach}
 detach(magnesio)
 ```
-
-
-
-
-
-
-
 
 
 
@@ -164,17 +149,20 @@ Since Kurtosis is a measure of whether the data are heavy-tailed or light-tailed
 
 
 We now check this against a Normal distrubtion (which is symmetric)
+
 ```{r normal}
 dat <- rnorm(100000, mean = 0, sd = 1)
 summary(dat)
 ```
 
 The skewness is almost $0$, like in all symmetric distributions.
+
 ```{r normal-skewness}
 skewness(dat)
 ```
 
 Kurtosis is close to $3$: light tails and no tendency to outlier with respect to the Normal distribution.
+
 ```{r normal-kurtosis}
 kurtosis(dat)
 ```
@@ -192,16 +180,19 @@ summary(dat)
 
 
 We make an histogram.
+
 ```{r exponential-histogram}
 hist(dat)
 ```
 
 The positive skewness means that the right tail is long with respect to the left tail.
+
 ```{r}
 skewness(dat)
 ```
 
 The high kurtosis implies a heavy tail and a tendency to outliers with respect to the Normal distribution.
+
 ```{r}
 kurtosis(dat)
 ```
@@ -389,30 +380,29 @@ length(new_density)
 
 We compare location and shape indices *before* and *after* the removal of the outlier.
 Robust indices do not change a lot.
+
 ```{r new-caven-robust-compare}
 knitr::kable(rbind(quantile(Density), quantile(new_density)))
 ```
 
 The mean and (in particular) the standard deviation are more heavily affected.
+
 ```{r new-caven-compare}
 knitr::kable(rbind(cbind(mean(Density), sd(Density)), cbind(mean(new_density), sd(new_density))), col.names = c("Mean", "Standard Deviation"))
 ```
 
 
 We also make a boxplot of the data without the outlier.
+
 ```{r new-caven-boxplot}
 boxplot(new_density, horizontal = FALSE, main = "Boxplot Density", ylab = "earth density")
 ```
 
 We are finally ready to detach the data set.
+
 ```{r caven-detach}
 detach(caven)
 ```
-
-
-
-
-
 
 
 
@@ -432,7 +422,8 @@ Repeat the previous analysis on the dataset `serum.txt`:
    * Identify (*if applicable*) any outliers and compare the results with and without removing them from the dataset.
     
 Data are taken from [[Bland]](https://global.oup.com/academic/product/an-introduction-to-medical-statistics-9780199589920?cc=it&lang=en&). They contain the triglyceride concentration in blood serum [mmol/l] of the umbilical cord in 282 subjects.
- 
+
+
 ```{r exercise-serum, exercise = TRUE}
 serum <- moxier::serum
 ```
@@ -458,15 +449,15 @@ serum <- moxier::serum
 We now turn our attention to a third dataset, as found in [Mackowiak and Wasserman](https://www.ncbi.nlm.nih.gov/pubmed/1302471).
 The dataset comprises 130 tri-variate observations:
 
-    1. Temperature (*temperature*) [°F]
-    1. Sesso (*gender*) (U: Male, D: Female)
-    1. Freq cardiaca (*cardiac frequency*) [pulse/min]
+  1. Temperature (*temperature*) [°F]
+  1. Sesso (*gender*) (U: Male, D: Female)
+  1. Freq cardiaca (*cardiac frequency*) [pulse/min]
     
 The goals of the analysis are to:
 
-    1. Describe the variable `Temperatura` through suitable indices.
-    1. Plot it and interpret it.
-    1. Compare, both graphically and quantitatively) the distribution of male and female temperatures.
+  1. Describe the variable `Temperatura` through suitable indices.
+  1. Plot it and interpret it.
+  1. Compare, both graphically and quantitatively) the distribution of male and female temperatures.
     
 
 
@@ -483,11 +474,13 @@ n <- length(Temperatura)
 
 
 The mean is:
+
 ```{r temp-mean}
 mean(Temperatura)
 ```
 
 The variance is:
+
 ```{r temp-var}
 var(Temperatura)
 ```
@@ -496,6 +489,7 @@ var(Temperatura)
 The population variance is obtained donig $$\frac{n - 1}{n} \mathrm{Var}\left(\mathrm{Temperatura}\right).$$
 
 The standard deviation is:
+
 ```{r temp-sd}
 sd(Temperatura)
 ```
@@ -505,6 +499,7 @@ The population standard deviation is obtained donig $$\frac{n - 1}{n} \mathrm{sd
 
 
 The minimum and the maximum are:
+
 ```{r temp-max-min}
 min(Temperatura)
 max(Temperatura)
@@ -512,6 +507,7 @@ max(Temperatura)
 
 
 The range:
+
 ```{r temp-range}
 range(Temperatura)
 diff(range(Temperatura))
@@ -520,6 +516,7 @@ diff(range(Temperatura))
 
 
 The quantiles:
+
 ```{r temp-quantiles}
 quantile(Temperatura)
 Q1 <- quantile(Temperatura, 0.25)
@@ -544,12 +541,14 @@ IQR(Temperatura)
 
 
 We make a histogram
+
 ```{r temp-hist}
 hist(Temperatura, prob = TRUE, main = "Histogram", xlab = "body temperature [°F]", ylab = "density")
 ```
 
 
 and a boxplot.
+
 ```{r temp-boxplot}
 boxplot(Temperatura, horizontal = FALSE, main = "Boxplot", ylab = "body temperature [°F]", ylim = c(96, 101))
 ```
@@ -572,11 +571,12 @@ boxplot(Temperatura, horizontal = FALSE, main = "Boxplot", ylab = "body temperat
 To aid us with the analysis, we use the `tapply()` function.
 It takes three main arguments:
 
-  - the variable of interest
-  - the stratifying categorical variable
-  - the operation to be applied to the first argument, stratified according to the categories introduced by the second argument.
+  * the variable of interest
+  * the stratifying categorical variable
+  * the operation to be applied to the first argument, stratified according to the categories introduced by the second argument.
 
 We compute the mean.
+
 ```{r temp-gender-mean}
 tapply(Temperatura, Sesso, mean)
 ```
@@ -592,12 +592,14 @@ What do the following mean:
 
 
 We now compute the range.
+
 ```{r temp-gender-range}
 tapply(Temperatura, Sesso, range)
 ```
 
 
 To compute the range within the categories, we resort to the `diff()` function.
+
 ```{r temp-gender-range-diff}
 diff(tapply(Temperatura, Sesso, range)$D)
 diff(tapply(Temperatura, Sesso, range)$U)
@@ -605,6 +607,7 @@ diff(tapply(Temperatura, Sesso, range)$U)
 
 
 Let us investigate the quantiles. We print the IQR of women and men, respectively, noting that men's IQE is wider than women's IQR.
+
 ```{r temp-gender-quantile}
 (Q <- tapply(Temperatura, Sesso, quantile))
 Q1 <- c(Q$D[2], Q$U[2])
@@ -617,9 +620,11 @@ Q3 - Q1
 
 
 Compute the $90^{\mathrm{th}}$ quantile for the variable `Temperatura` using the `tapply()` command.
+
 ```{r temp-gender-quantile-90, exercise = TRUE}
 
 ```
+
 ```{r temp-gender-quantile-90-solution}
 Q_90 <- tapply(Temperatura, Sesso, quantile, probs = 0.9)
 Q_90
@@ -631,27 +636,9 @@ Q_90
 
 
 
-
-
-
-
-
-
-
-
 ### Graphical Representation
 
-
-
 We now make some histrograms.
-
-
-
-
-
-
-
-
 
 
 
@@ -669,11 +656,6 @@ hist(Temperatura[Sesso == "U"],
   ylab = "Density", col = "lightblue", xlim = range(Temperatura), breaks = seq(96, 101, .25), ylim = c(0, 1)
 )
 ```
-
-
-
-
-
 
 
 
@@ -707,11 +689,6 @@ hist(Temperatura[Sesso == "D"],
 
 
 
-
-
-
-
-
 ### ggplot
 
 
@@ -725,18 +702,9 @@ temp %>%
 
 
 
-
-
-
-
-
-
-### BOXPLOTS
-
-
+### Boxplots
 
 We now turn our attention to boxplots.
-
 
 
 
@@ -749,12 +717,6 @@ boxplot(Temperatura ~ Sesso,
   ylab = "body temperature [°F]", ylim = c(94, 102)
 )
 ```
-
-
-
-
-
-
 
 
 
@@ -778,18 +740,11 @@ temp %>%
 
 
 
-
-
-
-
-
-
-
 ### Conclusion
 
 
-
 To conclude, we detach the data.
+
 ```{r temp-detac}
 detach(temp)
 ```
