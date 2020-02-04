@@ -17,6 +17,7 @@ knitr::opts_chunk$set(echo = TRUE, exercise = FALSE)
 # Hierarchical Agglomerative Clustering
 
 We firstly load the libraries.
+
 ```{r load-library}
 library(RColorBrewer)
 ```
@@ -24,14 +25,18 @@ library(RColorBrewer)
 
 
 ## Loading the data
+
 We load the data.
+
 ```{r load-data}
 df <- iris[, 1:4]
 ```
 
 
 ## Computing distances
+
 We also compute the pairwise distances and plot the results.
+
 ```{r distances}
 iris_e <- dist(x = df, method = "euclidean")
 ```
@@ -42,7 +47,9 @@ image(1:150, 1:150, as.matrix(iris_e), main='Euclidean pairwise distances', asp=
 
 
 ## Dendogram
+
 We build dendograms considering different linkages.
+
 ```{r dendograms}
 iris_es <- hclust(d = iris_e, method='single')
 iris_ea <- hclust(d = iris_e, method='average')
@@ -51,6 +58,7 @@ iris_ec <- hclust(d = iris_e, method='complete')
 
 
 We plot the results we have obtained.
+
 ```{r dendograms-plot}
 par(mfrow = c(1, 3))
 plot(iris_es, main='Euclidean Single', hang=-0.1, xlab='', labels=FALSE, cex=0.6, sub='')
@@ -61,7 +69,9 @@ plot(iris_ea, main='Euclidean Average', hang=-0.1, xlab='', labels=FALSE, cex=0.
 
 
 ## Cophenetic Matrices
+
 Moreover, we compute the cophenetic matrices.
+
 ```{r cophenetic-matrices}
 coph_es <- cophenetic(iris_es)
 coph_ec <- cophenetic(iris_ec)
@@ -69,6 +79,7 @@ coph_ea <- cophenetic(iris_ea)
 ```
 
 and show the cophenetic indices.
+
 ```{r cophenetic-indices}
 (es <-cor(iris_e, coph_es))
 (ec <-cor(iris_e, coph_ec))
@@ -77,7 +88,9 @@ and show the cophenetic indices.
 
 
 ## Extracting clusters
+
 Try to extract different clusters!
+
 ```{r extract-clusters, exercise = TRUE}
 k <- 2
 (cluster_ea <- cutree(tree = iris_ea, k = k))

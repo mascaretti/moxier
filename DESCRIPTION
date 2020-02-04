@@ -51,4 +51,5 @@ Imports:
     scatterplot3d,
     mvtnorm,
     kknn,
-    latex2exp
+    latex2exp,
+    nycflights13

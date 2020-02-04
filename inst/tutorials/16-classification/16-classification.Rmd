@@ -15,8 +15,11 @@ knitr::opts_chunk$set(echo = TRUE, exercise = FALSE)
 ```
 
 # Classification
+
 ## Preliminary Analysis
+
 We are going to attempt to classify the gender of a group of humans, based on their heights.
+
 ```{r load-libary}
 library(MASS)
 library(class)
@@ -34,6 +37,7 @@ feature1 <- mydata.biosocial[, "height"]
 ```
 
 We also make a plot.
+
 ```{r plot-data}
 plot(feature1, col = group)
 ```
@@ -41,13 +45,16 @@ plot(feature1, col = group)
 
 
 ## LDA and QDA
+
 We fit the models.
+
 ```{r lda-qda-fit}
 lda.fit <- lda(group ~ feature1)
 qda.fit <- qda(group ~ feature1)
 ```
 
 Estimate the posterior group probabilities provided by the two models for a subject whose height is 175 cm.
+
 ```{r fit-175}
 predict(lda.fit, data.frame(feature1 = 175))
 predict(qda.fit, data.frame(feature1 = 175))
@@ -55,7 +62,9 @@ predict(qda.fit, data.frame(feature1 = 175))
 
 
 ## Grid
+
 We estimate posterior probabilities on a regular grid provided by the two models
+
 ```{r fit-grid}
 x <- data.frame(feature1 = seq(min(feature1), max(feature1), length = 100))
 lda.posterior <- predict(lda.fit, x)$posterior
@@ -64,7 +73,9 @@ qda.posterior <- predict(qda.fit, x)$posterior
 
 
 ### Plot posterior
+
 We plot the probabilities we obtain using LDA.
+
 ```{r}
 # LDA Group 1
 plot(x[, 1], lda.posterior[, 1], type = "l", col = "blue", xlab = "x", ylab = "estimated posterior")
@@ -73,6 +84,7 @@ points(x[, 1], lda.posterior[, 2], type = "l", col = "red")
 ```
 
 and overplot those obtained with QDA.
+
 ```{r}
 # LDA Group 1
 plot(x[, 1], lda.posterior[, 1], type = "l", col = "blue", xlab = "x", ylab = "estimated posterior")
@@ -87,13 +99,16 @@ points(x[, 1], qda.posterior[, 2], type = "l", col = "red", lty = 2)
 
 
 ## k-Nearest Neighbour Classifier
+
 We fit the model on a regular grid.
+
 ```{r knn-fit}
 x <- data.frame(feature1 = seq(min(feature1), max(feature1), length = 100))
 (knn.fitted <- knn(train = feature1, test = x, cl = group, k = 30, prob = T))
 ```
 
 We need to chose $k$.
+
 ```{r}
 train.cv <- train.kknn(group ~ feature1,
   data = data.frame(feature1, group),
@@ -106,18 +121,22 @@ plot(train.cv)
 
 
 ## CART
+
 We fit the model
+
 ```{r cart-fit}
 rpart.fit <- rpart(group ~ feature1)
 ```
 
 
 and stimate the posterior group probabilities for a subject whose height is 175cm.
+
 ```{r cart-175}
 predict(rpart.fit, data.frame(feature1 = 175))
 ```
 
 We compute the values on a grid.
+
 ```{r cart-grid}
 x <- data.frame(feature1 = seq(min(feature1), max(feature1), length = 100))
 data.frame(x = x, female = predict(rpart.fit, x)[, 1], male = 1 - predict(rpart.fit, x)[, 1])
@@ -126,7 +145,9 @@ data.frame(x = x, female = predict(rpart.fit, x)[, 1], male = 1 - predict(rpart.
 
 
 ## Multivariate Analysis
+
 We now consider two classes: `Female` and `Male` and six features.
+
 ```{r social-data}
 group <- mydata.gender
 features <- mydata.biosocial
@@ -136,21 +157,25 @@ pairs(features, col = group)
 
 
 We fit the QDA.
+
 ```{r social-qda}
 qda.fit <- qda(group ~ ., features)
 ```
 
 
 Estimate the posterior group probabilities for the following subject:
+
 ```{r subject-qda}
 kable(data.frame(age = 23, height = 175, weight = 70, phone = 100, facebook = 1000, instagram = 500))
 ```
+
 ```{r social-qda-subject}
 predict(qda.fit, data.frame(age = 23, height = 175, weight = 70, phone = 100, facebook = 1000, instagram = 500))
 ```
 
 
 We also estimate the posterior probabilities for the subjects in the original dataset.
+
 ```{r social-qda-posterior}
 data.frame(predict(qda.fit))
 ```
@@ -158,11 +183,13 @@ data.frame(predict(qda.fit))
 
 
 We compute the confusion matrix.
+
 ```{r social-qda-confusion}
 kable(table(True.class = group, Predicted.class = predict(qda.fit)$class))
 ```
 
 and the *apparent* Accuracy and Error Rate.
+
 ```{r social-qda-accuracy}
 Conf <- table(True.class = group, Predicted.class = predict(qda.fit)$class)
 Accuracy <- sum(diag(Conf)) / sum(Conf)
@@ -173,12 +200,15 @@ ErrorRate <- 1 - Accuracy
 
 
 ## LOO CV
+
 We compute the confusion matrix
+
 ```{r social-qda-confusion-loo}
 kable(table(True.class = group, Predicted.class = predict(qda.fit, method = "looCV")$class))
 ```
 
 and the *apparent* Accuracy and Error Rate.
+
 ```{r social-qda-accuracy-error-rate-loo}
 ConfCV <- table(True.class = group, Predicted.class = predict(qda.fit, method = "looCV")$class)
 kable(ConfCV)
@@ -190,12 +220,15 @@ kable(ConfCV)
 
 
 ## kNN
+
 We fit the model on the original dataset, after rescaling.
+
 ```{r rescale}
 rescale <- function(x) {
   (x - min(x)) / (max(x) - min(x))
 }
 ```
+
 ```{r rescale-data}
 mydata.biosocial.rescaled <- as.data.frame(lapply(mydata.biosocial, rescale))
 
@@ -205,20 +238,24 @@ features <- mydata.biosocial.rescaled
 
 
 We fit the algorithm.
+
 ```{r social-knn}
 knn.fitted <- knn(train = features, test = features, cl = group, k = 11, prob = T)
 ```
 
 Estimate the posterior group probabilities for the following subject:
+
 ```{r subject-knn}
 kable(data.frame(age = 23, height = 175, weight = 70, phone = 100, facebook = 1000, instagram = 500))
 ```
+
 ```{r knn-subject}
 (knn.fitted <- knn(train = features, test = data.frame(age = 23, height = 175, weight = 70, phone = 100, facebook = 1000, instagram = 500), cl = group, k = 11, prob = T))
 ```
 
 
 We also select the value of $k$ using leave-one-out cross-validation.
+
 ```{r knn-loo}
 train.cv <- train.kknn(group ~ .,
   data = data.frame(features, group),
@@ -229,7 +266,9 @@ plot(train.cv)
 
 
 
+
 We plot the confusion matrix
+
 ```{r knn-confusion}
 knn.fitted <- knn(train = features, test = features, cl = group, k = train.cv$best.parameters$k, prob = T)
 kable(table(True.class = group, Predicted.class = knn.fitted))
@@ -237,6 +276,7 @@ kable(table(True.class = group, Predicted.class = knn.fitted))
 
 
 We also compute the *apparent* Accuracy and Error Rate.
+
 ```{r knn-accuracy-error-rate}
 Conf <- table(True.class = group, Predicted.class = knn.fitted)
 kable(Conf)
@@ -250,12 +290,15 @@ kable(Conf)
 
 
 ## CART
-WE fit the model and plot the results.
+
+We fit the model and plot the results.
+
 ```{r cart-fit-multivariate}
 group <- mydata.gender
 features <- mydata.biosocial
 rpart.fit <- rpart(group ~ ., data = features)
 ```
+
 ```{r cart-plot}
 plot(rpart.fit)
 text(rpart.fit)
@@ -264,20 +307,24 @@ text(rpart.fit)
 
 
 Estimate the posterior group probabilities for the following subject:
+
 ```{r subject-cart}
 kable(data.frame(age = 23, height = 175, weight = 70, phone = 100, facebook = 1000, instagram = 500))
 ```
+
 ```{r cart-subject-fit}
 predict(rpart.fit, data.frame(age = 23, height = 175, weight = 70, phone = 100, facebook = 1000, instagram = 500))
 ```
 
 We estimate the probabilities on the original dataset.
+
 ```{r cart-dataset}
 data.frame(predict(rpart.fit))
 ```
 
 
 We also compute the confusion matrix, the *apparent* Accuracy and the error rate.
+
 ```{r random}
 kable(table(True.class = group, Predicted.class = predict(rpart.fit, type = "class")))
 

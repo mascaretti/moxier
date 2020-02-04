@@ -21,6 +21,7 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, exercise = FALSE)
 # Depth Measure: Gini Coefficient and Lorenz Curve
 
 The first thing we do is loading the required libraries.
+
 ```{r load-libraries}
 library(ineq)
 ```
@@ -41,11 +42,13 @@ AirPassengers
 ### Overall Gini
 
 We compute the overall Gini index.
+
 ```{r ap-data}
 ineq(AirPassengers, type = "Gini")
 ```
 
 We plot the results.
+
 ```{r ap-data-lc}
 plot(Lc(AirPassengers), col = "darkred", lwd = 2)
 ```
@@ -74,6 +77,7 @@ They all look very similar, but some years are closer to having an equal number 
 
 ### Gini index per year
 We compute the Gini index per year.
+
 ```{r ap-gini-yearly}
 YGini <- c()
 for (i in 0:11) {
@@ -87,6 +91,7 @@ attach(YGini)
 
 
 The maximum and the minimum are:
+
 ```{r ap-gini-max-min}
 year[which(Gini.Index == min(Gini.Index))]
 year[which(Gini.Index == max(Gini.Index))]
@@ -95,6 +100,7 @@ year[which(Gini.Index == max(Gini.Index))]
 
 
 We plot the index.
+
 ```{r ap-gini-yearly-plot}
 plot(year, Gini.Index, main = "Gini Index per Year", xlab = "year", ylab = "Gini Index")
 ```
@@ -103,6 +109,7 @@ It looks like concentration is **increasing**.
 
 
 And we detach the data.
+
 ```{r ap-gini-yearly-detach}
 detach(YGini)
 ```
@@ -126,6 +133,7 @@ attach(Ilocos)
 
 
 We extract and rescale income for the provinces "Pangasinan" and "La Union".
+
 ```{r apis-data}
 income.p <- income[province == "Pangasinan"] / 10000
 income.u <- income[province == "La Union"] / 10000
@@ -134,6 +142,7 @@ income.u <- income[province == "La Union"] / 10000
 
 
 We compute the Lorenz curves.
+
 ```{r apis-lorenz}
 Lc.p <- Lc(income.p)
 Lc.u <- Lc(income.u)
@@ -141,6 +150,7 @@ Lc.u <- Lc(income.u)
 
 
 We plot both curves.
+
 ```{r apis-lorenz-plot}
 plot(Lc.p)
 lines(Lc.u, col = 2)
@@ -157,6 +167,7 @@ In this example, we simulate data to get some feeling for the Lorenz curve and G
 
 
 We set the seed for replicability and set the sample size.
+
 ```{r seed}
 set.seed(050218)
 n <- 100000
@@ -167,6 +178,7 @@ n <- 100000
 
 ### First Distribution
 We simulate the normal distribution and check if everything went alright.
+
 ```{r normal}
 sdat <- rnorm(n, 0, 1)
 hist(sdat, breaks = "FD") 
@@ -186,6 +198,7 @@ inc <- inc + 10
 
 
 Let us see!
+
 ```{r dist-two-plot}
 hist(inc, prob = T, breaks = "FD", xlim = c(0, max(inc)))
 points(quantile(inc, prob = seq(0, 1, .1)), rep(0, 11), col = "red", pch = 19)
@@ -193,6 +206,7 @@ points(quantile(inc, prob = seq(0, 1, .1)), rep(0, 11), col = "red", pch = 19)
 
 
 Let us see if everything went ok: we check if the quantiles of the gaussian distribution were mapped to the quantiles of the new distribution by checking the media.
+
 ```{r dist-two-check}
 median(inc)
 median(inc) - (exp(median(sdat)) + 10)
@@ -216,6 +230,7 @@ norm.inc <- rnorm(n, mean = mean(inc), sd = sd(inc))
 
 
 We check the result.
+
 ```{r dist-three-plot}
 hist(inc, prob = T, breaks = "FD", xlim = c(0, max(inc))) # plot a representation of the two distributions
 x <- seq(mean(norm.inc) - 4 * sd(norm.inc), mean(norm.inc) + 4 * sd(norm.inc), .01)
@@ -227,6 +242,7 @@ legend(40, 0.5, c("inc", "norm.inc"), lwd = 1, col = c("black", "blue"))
 
 
 If `inc` and `norm.inc` were incomes the total income for the two populations would almost be the same.
+
 ```{r totals}
 sum(inc)
 sum(norm.inc)
@@ -272,6 +288,7 @@ Overall the Gaussian has a higher concentration index.
 
 ### Uniform sample
 Consider now a sample from a uniform distribution, with the same mean and standard deviation as in.
+
 ```{r uniform}
 uni.inc <- runif(n, min = mean(inc) - sqrt(3) * sd(inc), max = mean(inc) + sqrt(3) * sd(inc))
 
@@ -281,6 +298,7 @@ sd(uni.inc) / sd(inc)
 
 
 We plot the three histograms.
+
 ```{r dists-histograms}
 hist(inc, prob = T, breaks = "FD", xlim = c(0, max(inc))) # plot a representation of the three distributions
 x <- seq(mean(norm.inc) - 4 * sd(norm.inc), mean(norm.inc) + 4 * sd(norm.inc), .01)
@@ -293,6 +311,7 @@ legend(40, 0.5, c("inc", "norm.inc", "uni.inc"), lwd = 1, col = c("black", "blue
 
 
 In which population is income more concentrated?
+
 ```{r dists-lorenz}
 plot(Lc(inc), main = "Lorenz curve of inc")
 lines(Lc(norm.inc), col = "blue")
@@ -313,6 +332,7 @@ uni2.inc <- runif(n, min = mean(inc) - 2 * sqrt(3) * sd(inc), max = mean(inc) + 
 
 
 Check the differences!
+
 ```{r uniform-high-var-comparison}
 mean(uni2.inc) - mean(inc) # to be sure, check the differences
 sd(uni2.inc) / sd(inc)
@@ -321,6 +341,7 @@ sd(uni2.inc) / sd(inc)
 
 
 We plot the Lorenz curves!
+
 ```{r dists-high-var-lorenz}
 plot(Lc(inc), main = "Lorenz curve of inc")
 lines(Lc(norm.inc), col = "blue")
@@ -333,6 +354,7 @@ legend(.05, .9, c("inc", "norm.inc", "uni.inc", "uni2.inc"), lwd = 1, col = c("b
 
 
 Let us look at the Gini indices.
+
 ```{r}
 uni.inc.Gini <- ineq(uni.inc, type = "Gini")
 uni2.inc.Gini <- ineq(uni2.inc, type = "Gini")
@@ -353,6 +375,7 @@ exp.inc <- rexp(n, rate = 1 / mean(inc))
 
 
 We make a histogram.
+
 ```{r}
 hist(inc, prob = T, breaks = "FD", xlim = c(0, max(inc))) # plot a representation of the four distribution distributions
 x <- seq(mean(norm.inc) - 4 * sd(norm.inc), mean(norm.inc) + 4 * sd(norm.inc), .01)
@@ -366,6 +389,7 @@ legend(40, 0.5, c("inc", "norm.inc", "uni.inc", "exp.inc"), lwd = 1, col = c("bl
 
 
 And once again compare total incomes.
+
 ```{r exp-total}
 sum(exp.inc)
 ```
@@ -373,6 +397,7 @@ sum(exp.inc)
 
 
 We plot the concentration curves.
+
 ```{r exp-lorenz}
 plot(Lc(inc), main = "Lorenz curve of inc")
 lines(Lc(norm.inc), col = "blue")

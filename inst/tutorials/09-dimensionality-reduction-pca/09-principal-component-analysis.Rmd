@@ -21,6 +21,7 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, exercise = FALSE)
 
 ## Reading the data
 First of all, we read the data and we convert values in minutes to seconds.
+
 ```{r loading-data, exercise=FALSE}
 raw_data <- moxier::record_mod
 
@@ -39,6 +40,7 @@ df
 
 ## Exploratory Data Analysis
 We make a boxplot to explore the data.
+
 ```{r boxplot, exercise=FALSE}
 boxplot(df)
 ```
@@ -50,11 +52,13 @@ This could *significantly* influence the PCA.
 
 ## Principal Component Analysis
 We perform the PCA
+
 ```{r pca, exercise=FALSE}
 (pc_df <- princomp(df, scores = T))
 ```
 
 and also visualise a summary of it.
+
 ```{r pca-summary, exercise=FALSE}
 summary(pc_df)
 ```
@@ -62,20 +66,25 @@ summary(pc_df)
 
 
 We also notice inspect the standard deviation of the components,
+
 ```{r pca-sd}
 knitr::kable(pc_df$sd)
 ```
+
 the proportion of variance explained by each PC
+
 ```{r pca-variance-explained}
 knitr::kable(pc_df$sd^2/sum(pc_df$sd^2))
 ```
 and the cumulative proportion of explained variance.
+
 ```{r pca-cumulative-variance}
 knitr::kable(cumsum(pc_df$sd^2)/sum(pc_df$sd^2))
 ```
 
 
 We can visualise it by means of a screeplot.
+
 ```{r pca-screeplot}
 screeplot(pc_df)
 ```
@@ -84,12 +93,14 @@ screeplot(pc_df)
 
 ### Loadings
 We call **loadings** coefficients of the linear combination of the original variables that defines each principal component)
+
 ```{r pca-loadings}
 load.rec <- pc_df$loadings
 ```
 
 
 We can graphically represent the loadings of the first six principal components.
+
 ```{r pca-six-plot}
 par(mar = c(1,4,0,2), mfrow = c(6,1))
 for(i in 1:6) barplot(load.rec[,i], ylim = c(-1, 1))
@@ -102,6 +113,7 @@ The loadings reflect the previous observations: the first PC is represented by t
 ## Explained Variance
 
 We make a plot to visualise the explained variance.
+
 ```{r pca-explained-variance}
 layout(matrix(c(2, 3, 1, 3), 2, byrow = T))
 plot(pc_df, las = 2, main = "Principal components", ylim = c(0, 3.5e6))
@@ -121,12 +133,14 @@ axis(1, at = 1:ncol(df), labels = 1:ncol(df), las = 2)
 
 ### Scores
 We now consider scores.
+
 ```{r pca-scores}
 scores.df <- pc_df$scores
 knitr::kable(scores.df)
 ```
 
 We plot the results.
+
 ```{r pca-scores-plot}
 layout(matrix(c(1,2),2))
 boxplot(df, las=2, col='red', main='Original variables')
@@ -137,6 +151,7 @@ boxplot(scores.df, las=2, col='red', main='Principal components')
 
 
 We finally make a biplot.
+
 ```{r pca-biplot}
 biplot(pc_df, scale=0, cex=.7)
 ```
@@ -145,12 +160,14 @@ biplot(pc_df, scale=0, cex=.7)
 ## PCA with standardised variables
 
 We now compute the standardised variables,
+
 ```{r pca-sd-compute}
 runrec.sd <- scale(df)
 runrec.sd <- data.frame(runrec.sd)
 ```
 
 and the PCA
+
 ```{r pca-sd-fit}
 pc.runrec <- princomp(runrec.sd, scores=T)
 pc.runrec
@@ -161,6 +178,7 @@ summary(pc.runrec)
 
 ### Explained Variance
 We take a look at the explained variance.
+
 ```{r pca-sd-explained}
 layout(matrix(c(2,3,1,3),2,byrow=T))
 plot(pc.runrec, las=2, main='Principal components', ylim=c(0,6))
@@ -184,11 +202,13 @@ We see that keeping one or two PCs would probably do.
 ### Loadings
 
 We compute the loadings
+
 ```{r pca-sd-loadings}
 (load.rec <- pc.runrec$loadings)
 ```
 
 and plot them
+
 ```{r pca-sd-loadings-plot}
 par(mar = c(2,2,2,1), mfrow=c(3,1))
 for(i in 1:3)barplot(load.rec[,i], ylim = c(-1, 1), main=paste('Loadings PC ',i,sep=''))
@@ -199,21 +219,23 @@ for(i in 1:3)barplot(load.rec[,i], ylim = c(-1, 1), main=paste('Loadings PC ',i,
 In this case, the first PC represents an average of times of all the disciplines, taken with very similar (negative) weights. The second PC contrasts the short distances (m100, m200, m400) with long distances (m800, m1500, m3000, Marathon)
 
        
-        - High PC1: long times in all the disciplines
-        - Low PC1: short times in all the disciplines
-        - High PC2: long times in short distances, short times in long distances
-        - Low PC2: long times in short distances, short times in long distances
+  * High PC1: long times in all the disciplines
+  * Low PC1: short times in all the disciplines
+  * High PC2: long times in short distances, short times in long distances
+  * Low PC2: long times in short distances, short times in long distances
 
 
 
 ### Scores
 We now turn our attentions to the scores.
+
 ```{r pca-sd-scores}
 (scores.runrec <- pc.runrec$scores)
 ```
 
 
 We plot them
+
 ```{r pca-sd-scores-plot-i}
 layout(matrix(c(1,2),2))
 boxplot(runrec.sd, las=2, col='red', main='Original variables')

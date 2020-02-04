@@ -41,11 +41,13 @@ X <- rmvnorm(n, mu, sig)
 
 ### Plot
 We plot the data
+
 ```{r 01-plot, echo=TRUE, exercise=FALSE}
 plot(X, asp=1, xlab='Var1', ylab='Var2', pch=19)
 ```
 
 And add the sample mean
+
 ```{r 01-plot-sample-mean, echo=TRUE, exercise=FALSE}
 plot(X, asp=1, xlab='Var1', ylab='Var2', pch=19)
 points(colMeans(X)[1], colMeans(X)[2], col='red', pch=19,lwd=3)
@@ -56,6 +58,7 @@ We then plot the projection on the x and y axes and compute the variance.
 
 
 ### Axis X
+
 ```{r 01-plot-projection-x, echo=TRUE, exercise=FALSE}
 plot(X, asp=1, xlab='Var1', ylab='Var2', pch=19)
 points(colMeans(X)[1], colMeans(X)[2], col='red', pch=19,lwd=3)
@@ -70,6 +73,7 @@ var(X[,1])
 
 
 ### Axis Y
+
 ```{r 01-plot-projection-y, echo=TRUE, exercise=FALSE}
 plot(X, asp=1, xlab='Var1', ylab='Var2', pch=19)
 points(colMeans(X)[1], colMeans(X)[2], col='red', pch=19,lwd=3)
@@ -102,6 +106,7 @@ points(colMeans(X)[1]+cos(theta)*proj30,
 ```
 
 Try to change the value of $\theta$ and see what happens!
+
 ```{r 01-plot-function, echo=FALSE, exercise=FALSE}
 plot_direction <- function(X, theta) {
   tan_theta <- tan(theta)
@@ -128,11 +133,13 @@ plot_direction(X = X, theta = theta)
 
 ### All the directions
 We now compute the variance along all the directions.
+
 ```{r 01-theta, echo=TRUE, exercise=FALSE}
 theta <- seq(from = 0, to = 2*pi, by = 2*pi/3600)
 ```
 
 And we compute the variances.
+
 ```{r 01-variances-computation, exercise=FALSE}
 N <- length(theta)
 a <- matrix(data = c(cos(theta), sin(theta)), nrow = N, ncol = 2, byrow = FALSE)
@@ -142,6 +149,7 @@ Var <- apply(X = a, MARGIN = 1, FUN = function(x) cov(X %*% x))
 
 ### Analysis
 We now want to see how the variances change according to the direction.
+
 ```{r 01-variance-directions, exercise=FALSE}
 (max_var   <- max(Var))
 (max_theta <- theta[which.max(Var)])
@@ -155,6 +163,7 @@ We now want to see how the variances change according to the direction.
 
 
 ### Plotting the results
+
 ```{r 01-plotting-results, exercise=FALSE}
 par(mfrow=c(1,2))
 plot(X, asp=1, xlab='Var 1', ylab='Var 2',pch=20)
@@ -170,6 +179,7 @@ points(min_theta, min_var, pch=16, col='red')
 
 ### Exact Computation
 We now check what we have found against the actual values. We compute the loads (`loads`) and the variances (`var_pc`).
+
 ```{r 01-true-components, echo=TRUE, exercise=FALSE}
 (loads <- eigen(cov(X))$vectors)
 (var_pc <- eigen(cov(X))$values)

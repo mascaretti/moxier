@@ -47,6 +47,7 @@ medmin <- function(p, N) {
 
 ### Mean
 We set the mean of the distribution of the distance of the $N$ closest points $x_i$ such that $x_i \sim \mathcal{U}\left(\mathcal{B}_{p}\left[0,\,1\right]\right)$.
+
 ```{r}
 meanmin <- function(p, N) {
   sdmin <- function(x) {
@@ -62,6 +63,7 @@ meanmin <- function(p, N) {
 ## Visualising the curse of dimensionality
 ### Density
 We plot the density for varying $p$ (the space dimension) and set $N = 100$.
+
 ```{r plots}
 x <- seq(0, 1, .01)
 
@@ -115,6 +117,7 @@ plot(p, mediana,
 
 
 We plot the mean for varying $p$ (the space dimension) and set $N = 100$.
+
 ```{r}
 media <- c()
 for (p in 1:20) media <- c(media, meanmin(p, 100)$value)

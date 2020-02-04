@@ -26,6 +26,7 @@ We begin this laboratory by pointing to some useful resources regarding multivar
 
 
 Before beginning the analysis, we load the required libraries.
+
 ```{r load-libraries}
 library(plotly)
 library(corrplot)
@@ -41,6 +42,7 @@ The data was extracted from the 1974 Motor Trend US magazine. It comprises fuel 
 
 
 ### Loading data
+
 ```{r mtcars-load}
 data(mtcars)
 mtcars
@@ -53,11 +55,13 @@ attach(mtcars)
 
 ### Pairs
 We plot the data.
+
 ```{r mtcars-plot}
 plot(mtcars)
 ```
 
 There too many variables! We try to select the interesting ones.
+
 ```{r mtcars-plot-reduced}
 plot(mtcars[1:7])
 ```
@@ -70,6 +74,7 @@ Can you see any kind of dependence? Among which variables?
 
 ### 3d scatter plot
 We also plot a 3d scatter plot.
+
 ```{r mtcars-plot-3d}
 p <- plot_ly(mtcars, x = ~mpg, y = ~wt, z = ~qsec) %>%
   add_markers() %>%
@@ -87,6 +92,7 @@ p
 
 ### Star plots
 We make a star plots as well.
+
 ```{r mtcars-stars-first}
 stars(mtcars[, 1:7],
   key.loc = c(14, 2),
@@ -108,6 +114,7 @@ stars(mtcars[, 1:7],
 ### Location and dispersion indices
 
 We have the mean vector,
+
 ```{r mtcars-mean}
 colMeans(mtcars)
 apply(mtcars,2,mean)
@@ -116,17 +123,20 @@ apply(mtcars,2,mean)
 
 
 We also compute the Variance-Covariance Matrix,
+
 ```{r mtcars-var}
 var(mtcars)
 ```
 
 
 the correlation Matrix (with each entry within $[-1, 1]$),
+
 ```{r mtcars-corr}
 cor(mtcars)
 ```
 
 and we round it to make it easier to read it.
+
 ```{r mtcars-corr-rounded}
 round(cor(mtcars), 2) 
 ```
@@ -150,6 +160,7 @@ corrplot(M, type = "upper", order = "hclust", col = brewer.pal(n = 8, name = "Rd
 
 
 Notice that we can customise the plot.
+
 ```{r mtcars-corrplot-custom}
 corrplot(M, method = "circle", type = "upper")
 corrplot(M, method = "pie", type = "upper")
@@ -166,6 +177,7 @@ corrplot(M, method = "number", type = "upper")
 
 ### Heatmap
 We now visualise using a heatmap and the display of a clustering tree.
+
 ```{r mtcars-heatmap}
 col <- colorRampPalette(c("blue", "white", "red"))(20)
 heatmap(x = M, col = col, symm = TRUE)
@@ -182,12 +194,14 @@ We now consider only a few variables.
 ```
 
 We find the mean vector,
+
 ```{r df-mean}
 colMeans(data)
 ```
 
 
 the variance matrix
+
 ```{r df-var}
 var(data)
 ```
@@ -203,6 +217,7 @@ cor(data)
 
 ### Basic Scatterplot Matrix
 We make a basic scatterplot matrix.
+
 ```{r df-scatterplot}
 pairs(data, main = "Simple Scatterplot Matrix")
 ```
@@ -222,6 +237,7 @@ cpairs(data, panel.colors = data.col, gap = .5, main = "Variables Ordered and Co
 
 We make some 3d plots!
 One is interactive:
+
 ```{r}
 p <- plot_ly(mtcars, x = ~mpg, y = ~wt, z = ~qsec) %>%
   add_markers() %>%
@@ -234,12 +250,14 @@ p
 
 
 And here we project on a plane
+
 ```{r}
 scatterplot3d(wt, disp, mpg, main = "3D Scatterplot")
 ```
 
 
 and add some colour.
+
 ```{r}
 scatterplot3d(wt, disp, mpg, pch = 16, highlight.3d = TRUE, type = "h", main = "3D Scatterplot")
 ```
@@ -259,6 +277,7 @@ y <- rnorm(1000)
 
 
 We make some bins: we count the points falling in each occupied cell.
+
 ```{r simulate-bin}
 bin <- hexbin(x, y, xbins = 50)
 summary(bin)
@@ -266,6 +285,7 @@ summary(bin)
 
 
 And plot it!
+
 ```{r simulate-bin-plot}
 plot(bin, main = "Hexagonal Binning")
 ```
@@ -275,6 +295,7 @@ plot(bin, main = "Hexagonal Binning")
 
 ## Back to MTCARS data
 We plot the data using the bins.
+
 ```{r plot-scatter}
 plot(data$mpg, data$wt, xlab = "mpg", ylab = "wt", main = "Scatterplot")
 ```
@@ -294,6 +315,7 @@ plot(bin)
 We are going to use the `wine.txt` file.
 
 We first collect the data.
+
 ```{r wine-data}
 wine <- moxier::wine
 wine <- wine[, -1]
@@ -307,6 +329,7 @@ wine
 
 
 Describe the data and give suitable visual representation of the variables contained in the dataset. Select the relevant variables.
+
 ```{r wine-data-description, exercise = TRUE}
 
 ```
@@ -319,6 +342,7 @@ pairs(wine[2:6])
 
 
 Compute the main location and dispersion indices.
+
 ```{r wine-data-indices, exercise = TRUE}
 
 ```
@@ -335,6 +359,7 @@ cor(wine)
 
 
 Select a couple of continuous and/or categorical variables. Analyse them separaetely, as in the univariate case we have gone through in the previous lessons.
+
 ```{r wine-data-univariate, exercise = TRUE}
 
 ```
