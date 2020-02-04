@@ -572,9 +572,9 @@ boxplot(Temperatura, horizontal = FALSE, main = "Boxplot", ylab = "body temperat
 To aid us with the analysis, we use the `tapply()` function.
 It takes three main arguments:
 
-     * the variable of interest
-     * the stratifying categorical variable
-     * the operation to be applied to the first argument, stratified according to the categories introduced by the second argument.
+  - the variable of interest
+  - the stratifying categorical variable
+  - the operation to be applied to the first argument, stratified according to the categories introduced by the second argument.
 
 We compute the mean.
 ```{r temp-gender-mean}
