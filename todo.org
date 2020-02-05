@@ -4,37 +4,38 @@
 
 
 * MOXIER
-** TODO Porting to package [3/21]
+** TODO Porting to package [21/21]
 *** DONE 00-introduction-installing-r
 *** DONE 01-introduction-programming-r
 *** DONE 02-data-visualisations-graphics
-*** TODO 03-data-visualisations-ggplot2
+*** DONE 03-data-visualisations-ggplot2
 **** =ggplot2=
 - =ggplot2= not found.
 - check the =DESCRIPTION= file to check if the package is loaded. It is included!
 - I wasn't loading the =ggplot2= and =dplyr= libraries. I also added =dplyr= to the required packages.
-*** TODO 04-descriptive-statistics-univariate
+*** DONE 04-descriptive-statistics-univariate
 **** Issues
 - Missing =moments=, =plotrix=. 
 - Data: I must move *magnesium* into the package. Apparently, a
   solution may be of doing =magnesium <- moxier::magnesium"
-*** TODO 05-descriptive-statistics-depth-measures
-*** TODO 06-descriptive-statistics-multivariate
-*** TODO 07-descriptive-statistics-curse-dimensionality
-*** TODO 08-dimensionality-reduction-pca
-*** TODO 09-dimensionality-reduction-pca
-*** TODO 10-dimensionality-reduction-pca
-*** TODO 11-hypotheses-test-anova
-*** TODO 12-hypotheses-test-anova
-*** TODO 13-linear-regression
-*** TODO 14-linear-regression
-*** TODO 15-classification
-*** TODO 16-classification
-*** TODO 17-clustering
-*** TODO 18-clustering
-*** TODO 19-clustering
-*** TODO 20-extra-introduction-dplyr
+*** DONE 05-descriptive-statistics-depth-measures
+*** DONE 06-descriptive-statistics-multivariate
+*** DONE 07-descriptive-statistics-curse-dimensionality
+*** DONE 08-dimensionality-reduction-pca
+*** DONE 09-dimensionality-reduction-pca
+*** DONE 10-dimensionality-reduction-pca
+*** DONE 11-hypotheses-test-anova
+*** DONE 12-hypotheses-test-anova
+*** DONE 13-linear-regression
+*** DONE 14-linear-regression
+*** DONE 15-classification
+*** DONE 16-classification
+*** DONE 17-clustering
+*** DONE 18-clustering
+*** DONE 19-clustering
+*** DONE 20-extra-introduction-dplyr
 ** TODO Website [0%]
+*** TODO Read the [[https://bookdown.org/][bookdown]] documentation.
 *** TODO Read [[https://pkgdown.r-lib.org/][pkgdown]] documentation
 ** External Data in Packages
 I now follow [[https://r-pkgs.org/data.html][this book]] to get my head around the correct way to include data into an =R= package.
