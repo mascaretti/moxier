@@ -34,4 +34,5 @@ learnr::run_tutorial(package = "moxier")
 ```
 
 ## Webiste Test
-https://mascaretti.github.io/moxier/
+- Landing Page: https://mascaretti.github.io/moxier/
+- Instructions: https://mascaretti.github.io/moxier-companion/
