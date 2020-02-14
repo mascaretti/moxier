@@ -27,7 +27,7 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, exercise = FALSE)
 ### Introduction
 
 
-First of all, we load the required libraries.
+First of all, we load the required libraries to proceed. 
 
 ```{r load-libraries}
 library(MASS)
