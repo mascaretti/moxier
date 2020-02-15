@@ -16,6 +16,11 @@ You can install the released version of moxier from [GitHub](https://github.com/
 remotes::install_github("mascaretti/moxier")
 ```
 
+As this is a development version, before proceeding it is also better to run
+```r
+remotes::update_packages()
+```
+
 ## Example
 
 To run the tutorial:
