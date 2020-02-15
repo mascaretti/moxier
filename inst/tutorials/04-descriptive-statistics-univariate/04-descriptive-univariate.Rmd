@@ -1,9 +1,9 @@
 ---
-title: "Univariate Descriptive"
+title: "Multivariate Descriptive"
 author: "Andrea Mascaretti"
 output:
   learnr::tutorial:
-    progressive: true
+    progressive: false
     allow_skip: true
 runtime: shiny_prerendered
 ---

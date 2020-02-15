@@ -3,7 +3,7 @@ title: "Programming in R"
 author: "Andrea Mascaretti"
 output:
   learnr::tutorial:
-    progressive: true
+    progressive: false
     allow_skip: true
 runtime: shiny_prerendered
 ---
@@ -198,7 +198,7 @@ ls()
 
 
 ## Some vector algebra
-## Introduction
+### Introduction
 Everybody loves algebra and I am sure you do too.
 Let us see some basic operations.
 ```{r linear-algebra-example, exercise=FALSE, include=TRUE, echo=TRUE}
