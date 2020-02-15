@@ -5,8 +5,9 @@
 
 
 # Avoid uploading htmls and pictures
-.html
-.png
+*.html
+*.png
+
 
 
 # Created by https://www.gitignore.io/api/r,linux,emacs
