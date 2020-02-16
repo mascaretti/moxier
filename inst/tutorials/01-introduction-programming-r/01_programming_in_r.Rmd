@@ -328,12 +328,17 @@ To better understand a function, say `foo`, we use the `help` function to read t
 args(sample)
 ```
 
+```{r help-function-example-interactive, exercise=TRUE, echo=TRUE, include=TRUE}
+help(sample, help_type="text")
+```
+
 
 
 
 
 
 ### The arguments of `sample`
+
 Notice that `sample` takes four arguments: `x`, `size`, `replace`, `prob`:
 
  - `x`: the vector from which we want to sample.
@@ -341,10 +346,10 @@ Notice that `sample` takes four arguments: `x`, `size`, `replace`, `prob`:
  - `replace`: to indicate whether each sampling consider all the elements of `x`
  - `prob`: to indicate a vector of probabilities describing the probability of obtaining each value.
  
- ```{r sample-die-exercise, exercise=TRUE, echo=TRUE, include=TRUE}
+```{r sample-die-exercise, exercise=TRUE, echo=TRUE, include=TRUE}
  # Use the function to obtain one random element of the die.
  
- ```
+```
  
 ```{r sample-die-exercise-solution}
 sample(die, size = 1)
@@ -357,6 +362,7 @@ sample(die, size = 1)
 
 
 ### Passing values to functions
+
 Notice what we have done here. We have called a function passing some arguments:
 
   - `die`
@@ -374,7 +380,11 @@ As a side, notice that any text preceded by `#` is a comment and will be ignored
 
 
 ### Writing our first function
+
 We are now interested in writing our first function. The function should return the sum of two dice being rolled.
+
+
+
 
 
 
@@ -383,10 +393,12 @@ We are now interested in writing our first function. The function should return 
 
 ### Function constructor
 The syntax to write a function is quite straightforward.
+
 ```{r function-constructor-example, exercise=FALSE, include=TRUE, echo=TRUE}
 my_function <- function() {}
 ```
-In this case, we have called the function ```my_function```. The ```function``` constructor is then followed by brackets `()`: here we can pass the arguments. Between the curly brackets ```{}``` we put the body of the function: the set of instructions our function should compute.
+
+In this case, we have called the function `my_function`. The `function` constructor is then followed by brackets `()`: here we can pass the arguments. Between the curly brackets `{}` we put the body of the function: the set of instructions our function should compute.
 
 
 
@@ -395,7 +407,9 @@ In this case, we have called the function ```my_function```. The ```function``` 
 
 
 ### First step
+
 Let us try to write the first bit.
+
 ```{r sampling-function-example, exercise=FALSE, include=TRUE, echo=TRUE}
 roll <- function() {
   # This function defines a die of 6 faces and print two values.
@@ -407,9 +421,16 @@ roll()
 roll()
 roll()
 roll()
+
 ```
+
 Pretty neat, right?
 
+Try to do it again, this selecting one value!
+
+```{r sampling-function-exercise, exercise=TRUE, include=TRUE, echo=TRUE}
+ 
+```
 
 
 
@@ -417,11 +438,13 @@ Pretty neat, right?
 
 
 ### Are we done?
+
 Each time a function is called, R creates a new environment where to perform the calculation. What is an environment? We may think of it as a box where computations are made. Each box knows in which bigger box it is contained and looks there to find the arguments you are passing. At the same time, each function can only modify the objects of its own box.
 
 So, how do we give to the outer box the values we have computed? Easy! Just append it as the last line of the function and R will take care of communicating the result.
 
 Try to complete the function so that it returns the sum of the two values, using the `sum` function.
+
 ```{r function-return-exercise, exercise=TRUE, include=TRUE, echo=TRUE}
 roll <- function() {
   # This function defines a die of 6 faces and print two values.
@@ -449,6 +472,7 @@ roll <- function() {
 ### Are we done, now?
 Everything seems to be working fine. What if, however, we want our function to be more general and take as input an indefinite number of dice with an indefinite number of faces?
 We need to pass some arguments!
+
 ```{r generic-die-function-example, echo=TRUE, exercise=FALSE, include=TRUE}
 roll <- function(die, number_die) {
   extraction <- sample(die, size = number_die, replace = FALSE)
@@ -463,12 +487,14 @@ print(roll(die, number_die))
 print(roll(die, number_die))
 ```
 
-It looks great, but for a fact. Look at what happens now if we just call ```roll```.
+It looks great, but for a fact. Look at what happens now if we just call `roll`.
+
 ```{r wrong-default-example, echo=TRUE, error=TRUE, exercise=FALSE, include=TRUE}
 roll()
 ```
 
 Can you fix it?
+
 ```{r wrong-default-exercise, echo=TRUE, error=TRUE, exercise=TRUE, include=TRUE}
 roll <- function(die, number_die) {
   extraction <- sample(die, size = number_die, replace = FALSE)
@@ -491,11 +517,33 @@ roll <- function(die = 1:6, number_die = 2) {
 
 
 ## Scripts in R
+
 So, after all this work it may be worth it to save our function and use it in the future. How can we do so?
-RStudio allows you to create R script. An R script is a set of instructions that can be stored as a `.R` file and executed at a later time. It is a very convenient feature, as it allows to store your (well-documented) code. To crate a new script, you can either open it manually in RStudio or press ```Ctrl+Shift+N``` on Windows and ```Cmd+Shift+N``` on MacOs.
+RStudio allows you to create R script. An R script is a set of instructions that can be stored as a `.R` file and executed at a later time. It is a very convenient feature, as it allows to store your (well-documented) code. To crate a new script, you can either open it manually in RStudio or press `Ctrl+Shift+N` on Windows and `Cmd+Shift+N` on MacOS.
 
 
+## Loading and Storing objects in R
 
+During the R session, objects are created and stored by name. As we have seen, to retrieve all the objects that are currently stored, it is possible to use the `ls()` command. 
+
+Moreover, objects can be removed using the `rm()` function.
+
+For instance,
+
+```{r object-remove-example, exercise=FALSE, echo=TRUE, eval=FALSE}
+rm(x, y, z, ink, junk, temp, foo, bar)
+```
+
+will remove all the objects with those names.
+At the end of each session, R will ask you if you wish to store into a file the objects currently part of your session.
+Such objects will be stored to a file called `.RData`, in the current working directory.
+Moreover, the command lines that you have used will be stored into a `.RHistory` file.
+
+When R is later restarted, it reloads the workspace from the file, as well as the associated commands history.
+
+However, it is important to notice that saving `.RData` is increasingly seen as a *bad practice*. The reason for this is simple. Imagine that you have performed a statistical analysis on some data and that you are relying for the analysis on an object you have not explicitly saved. Nobody else is going to be able to run your code!
+
+Explicit is almost always better than implicit!
 
 
 
