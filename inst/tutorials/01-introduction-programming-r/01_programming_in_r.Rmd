@@ -13,7 +13,6 @@ require(learnr)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
 ## Basic Operations in R
 
 ### Introduction
@@ -81,7 +80,11 @@ This change whenever we have, for instance, a vector as
 91:115
 ```
 
+Try it!
 
+```{r vector-example-exercise, exercise=TRUE, include=TRUE, echo=TRUE}
+
+```
 
 
 
@@ -89,6 +92,7 @@ This change whenever we have, for instance, a vector as
 
 ### Incomplete expressions
 If you type a command that is incomplete, R will prompt you with a `+` sign until a complete expression is formed:
+
 ```{r incomplete-example, exercise=FALSE, include=TRUE, echo=TRUE}
 15 / 
   
@@ -99,14 +103,17 @@ If you type a command that is incomplete, R will prompt you with a `+` sign unti
 
 
 
-
 ### Wrong expressions
+
 At the same time, it will give you an error when it is not possible to obtain an expression that it can interpret.
+
 ```{r wrong-expression-example, exercise=FALSE, include=TRUE, error=TRUE, echo=TRUE}
 3 % 5
 ```
 
+```{r wrong-expression-example-exercise, exercise=TRUE, include=TRUE, error=TRUE, echo=TRUE}
 
+```
 
 
 
