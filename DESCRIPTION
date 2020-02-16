@@ -52,4 +52,5 @@ Imports:
     mvtnorm,
     kknn,
     latex2exp,
-    nycflights13
+    nycflights13,
+    printr
