@@ -1,4 +1,4 @@
-* To implement [3/13]
+* To implement [20/26]
 ** DONE =learnr::available_tutorials()=
 *** DONE Fix Descriptions of 4, 6, 7 (not Univariate Descriptive)
 ** TODO PCA
@@ -6,25 +6,25 @@
 ** DONE Closing notebooks
 *** DONE Signal =stop=
 *** DONE Add to [[https://mascaretti.github.io/moxier-companion][moxier companion]]
-** TODO More exercises
-** TODO More examples
-*** /Why is it not useful?/ in =ggplot2=: first say what is useful
+** DONE More exercises
+** DONE More examples
+*** DONE /Why is it not useful?/ in =ggplot2=: first say what is useful
 ** TODO =help()=
-*** TODO =help()= of datasets
+*** DONE =help()= of datasets
 *** Write descriptions of dataset
 ** TODO =View()=
 *** =View()= shows datasets in RStudio, calling the dataset within the notebook works
-** TODO ggplot2
-*** TODO Wrong formatting in =ggplot2=
-*** TODO Cheatsheet doesn't work in =ggplot2=
-** TODO Locator in graphics
-*** TODO =locator()= command does not work
-*** TODO Non funzionano i tasti /continue/
+** DONE ggplot2
+*** DONE Wrong formatting in =ggplot2=
+*** DONE Cheatsheet doesn't work in =ggplot2=
+** DONE Locator in graphics
+*** DONE =locator()= command does not work
+*** DONE Non funzionano i tasti /continue/
 *** DONE /Vector algebra/ is empty
 ** TODO Collective revision
 *** DONE Sharing GitHub repository
 *** TODO Decide whether to use issue/branch
-** TODO basic R
-*** TODO More in formation of formats (such as =.R=, =.RData=, ...)
+** DONE basic R
+*** DONE More in formation of formats (such as =.R=, =.RData=, ...)
 ** DONE Add MoxStat and Mox
 ** TODO Template of the mail
