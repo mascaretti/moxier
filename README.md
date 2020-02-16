@@ -1,7 +1,4 @@
-
 # moxier
-
-**UNDER CONSTRUCTION**
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -10,7 +7,11 @@ The goal of moxier is to provide students with material to learn statistics usin
 
 ## Installation
 
-You can install the released version of moxier from [GitHub](https://github.com/) with:
+You can install the moxier from [GitHub](https://mascaretti.github.io/moxier/).
+If you do not already have the `remotes` package, install it by doing
+``` r
+install.packages("remotes")
+```
 
 ``` r
 remotes::install_github("mascaretti/moxier")
@@ -23,11 +24,10 @@ remotes::update_packages()
 
 ## Example
 
-To run the tutorial:
+To run a tutorial, run a command of the form:
 ``` r
-# install.packages("learnr")
 learnr::run_tutorial(
-  name = "00-clustering", 
+  name = "03-data-visualisation-ggplot2", 
   package = "moxier"
 )
 ```
@@ -38,6 +38,6 @@ List of available tutorials in the **moxier** package at:
 learnr::run_tutorial(package = "moxier")
 ```
 
-## Webiste Test
+## Website Test
 - Landing Page: https://mascaretti.github.io/moxier/
 - Instructions: https://mascaretti.github.io/moxier-companion/
