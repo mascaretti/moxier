@@ -1,5 +1,5 @@
 ---
-title: "Univariate Descriptive"
+title: "Multivariate Descriptive"
 author: "Andrea Mascaretti"
 output:
   learnr::tutorial:
@@ -10,6 +10,7 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 library(learnr)
+library(printr)
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 

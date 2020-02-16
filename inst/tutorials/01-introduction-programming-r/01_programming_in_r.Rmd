@@ -10,6 +10,7 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 require(learnr)
+library(printr)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 

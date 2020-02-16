@@ -1,5 +1,5 @@
 ---
-title: "R and RStudio"
+title: "Installing R and RStudio"
 author: "Andrea Mascaretti"
 output:
   learnr::tutorial:
@@ -10,6 +10,7 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 library(learnr)
+library(printr)
 tutorial_options(exercise.timelimit = 60)
 ```
 
