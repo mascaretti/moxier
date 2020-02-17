@@ -9,8 +9,8 @@ runtime: shiny_prerendered
 ---
 
 ```{r setup, include=FALSE}
-library(learnr)
-library(printr)
+require(learnr)
+require(printr)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -53,7 +53,7 @@ Let us give a closer look at the data.
 
 
 
-```{r calling-mpg-exercise, exercise=TRUE}
+```{r calling-mpg-exercise, exercise = TRUE}
 # type mpg and analyse the output
 
 ```
@@ -65,7 +65,7 @@ Let us give a closer look at the data.
 Amongst the column of the `mpg` data frame, we are interested in two: `displ`, the engine size in litres, and `hwy`, the car's fuel efficiency on a highway (in miles per gallon).
 Let us plot the data.
 
-```{r scatterplot-example, echo=TRUE, exercise=FALSE}
+```{r scatterplot-example, echo = TRUE, exercise = FALSE}
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy))
 ```
@@ -107,7 +107,7 @@ Here you have a list of exercises! If you find yourself stuck, click on the solu
 
 *Run `ggplot(data = mpg)`. What happens?*
 
-```{r empty-plot-exercise, exercise=TRUE}
+```{r empty-plot-exercise, exercise = TRUE}
 
 ```
 ```{r empty-plot-exercise-solution}
