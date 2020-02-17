@@ -11,7 +11,7 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 library(learnr)
 library(printr)
-knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+knitr::opts_chunk$set(echo=TRUE, eval=TRUE)
 ```
 
 
@@ -69,14 +69,14 @@ One of the function that is used most often is the `plot()` function. It is a *g
 
 This is a scatterplot of `iris$Petal.Length` and `iris$Petal.Width`
 
-```{r high-level-example-one, exercise = FALSE}
+```{r high-level-example-one, exercise=FALSE}
 data("iris")
 plot(iris$Petal.Length, iris$Petal.Width)
 ```
 
 If we are interested in `iris$Petal.Width`, we do
 
-```{r high-level-example-two, exercise = FALSE}
+```{r high-level-example-two, exercise=FALSE}
 data("iris")
 plot(iris$Petal.Width)
 ```
@@ -90,21 +90,21 @@ plot(iris$Petal.Width)
 
 Plot a scatterplot of `iris$Sepal.Length` and `iris$Sepal.Width`
 
-```{r high-level-one, exercise = TRUE}
+```{r high-level-one, exercise=TRUE}
 data("iris")
 
 ```
 
 Plot `iris$Sepal.Width`
 
-```{r high-level-two, exercise = TRUE}
+```{r high-level-two, exercise=TRUE}
 data("iris")
 
 ```
 
 Plot the whole `iris` dataset
 
-```{r high-level-three, exercise = TRUE}
+```{r high-level-three, exercise=TRUE}
 data("iris")
 
 ```
@@ -128,19 +128,19 @@ An interesting results is obtained setting `panel = panel.smooth()` in the `pair
 **Example**
 The `pairs()` function is easy to use.
 
-```{r multivariate-data-pairs-example, exercise = FALSE}
+```{r multivariate-data-pairs-example, exercise=FALSE}
 pairs(iris)
 ```
 
 We try to `coplot()` function. We want to see the variation of `iris$Sepal.Length`, `iris$Petal.Length` based on the species `iris$Species`.
 
-```{r multivariate-data-coplot-example, exercise = FALSE}
+```{r multivariate-data-coplot-example, exercise=FALSE}
 coplot(iris$Sepal.Length ~ iris$Petal.Length | iris$Species)
 ```
 
 And based on the `iris$Sepal.Length`
 
-```{r multivariate-data-coplot-example-two, exercise = FALSE}
+```{r multivariate-data-coplot-example-two, exercise=FALSE}
 coplot(iris$Sepal.Length ~ iris$Petal.Length | iris$Sepal.Length)
 ```
 
@@ -149,7 +149,7 @@ coplot(iris$Sepal.Length ~ iris$Petal.Length | iris$Sepal.Length)
 
 First of all, try the `pairs()` function.
 
-```{r multivariate-data, exercise = TRUE}
+```{r multivariate-data, exercise=TRUE}
 data(iris)
 
 ```
@@ -157,14 +157,14 @@ data(iris)
 
 Then try the `coplot()` function, using `iris$Sepal.Width`, `iris$Petal.Width` according to `iris$Species`.
 
-```{r multivariate-data-coplot-exercise-one, exercise = TRUE}
+```{r multivariate-data-coplot-exercise-one, exercise=TRUE}
 data(iris)
 
 ```
 
 And according to `iris$Petal.Lenght`.
 
-```{r multivariate-data-coplot-exercise-two, exercise = TRUE}
+```{r multivariate-data-coplot-exercise-two, exercise=TRUE}
 data(iris)
 
 ```
@@ -176,7 +176,7 @@ Other high-level graphics functions that are worth mentioning are `qqnorm()`, `q
 `hist()` is very useful as it allows to approximate the distribution of a quantity.
 For instance, if wish to see how the `iris$Sepal.Length` is distributed, we can do
 
-```{r histogram, exercise = FALSE}
+```{r histogram, exercise=FALSE}
 hist(iris$Sepal.Length)
 ```
 
@@ -222,7 +222,7 @@ Labels are set by using the `xlab = ` and `ylab = ` arguments. A string is expec
 
 **Example:** We plot different types!
 
-```{r plot-lines-example, exercise = FALSE}
+```{r plot-lines-example, exercise=FALSE}
 plot(iris$Sepal.Length, type = "b")
 ```
 
@@ -231,7 +231,7 @@ plot(iris$Sepal.Length, type = "b")
 
 Try with `type = l`!
 
-```{r plot-lines, exercise = TRUE}
+```{r plot-lines, exercise=TRUE}
 
 ```
 
@@ -251,7 +251,7 @@ For instance, `points(x, y)` adds points to a graph, `lines(x, y)` adds points o
 
 *Example:* We add a line to the `iris$Sepal.Length`, to see the average.
 
-```{r low-level-average, exercise = FALSE}
+```{r low-level-average, exercise=FALSE}
 plot(iris$Sepal.Length)
 abline(h = mean(iris$Sepal.Length))
 ```
@@ -259,7 +259,7 @@ abline(h = mean(iris$Sepal.Length))
 
 *Exercise*: Get creative! Add the horizontal lines at one standard deviation above and below the mean!
 
-```{r low-level, exercise = TRUE}
+```{r low-level, exercise=TRUE}
 plot(iris$Sepal.Length)
 abline(h = mean(iris$Sepal.Length))
 
@@ -284,7 +284,7 @@ There are many graphing parameters, to change the look and feel of plots. For in
 
 **Exercise:** Make a scatterplot of two quantitative features of the Iris dataset. What happens if you set the colour to be like the `Species`?
 
-```{r graphics-parameters, exercise = TRUE}
+```{r graphics-parameters, exercise=TRUE}
 plot(iris$Sepal.Length, iris$Petal.Length)
 
 ```
@@ -324,7 +324,7 @@ to restore the settings. Why? Because otherwise you will have squared plots for 
 
 **Exercise:** Make four plots in the same graph.
 
-```{r multiple-figure, exercise = TRUE}
+```{r multiple-figure, exercise=TRUE}
 
 
 ```
