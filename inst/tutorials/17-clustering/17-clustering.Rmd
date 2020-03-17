@@ -1,5 +1,5 @@
 ---
-title: "Clustering - 00"
+title: "Clustering"
 author: "Andrea Mascaretti"
 output:
   learnr::tutorial:
@@ -11,6 +11,15 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 library(learnr)
 knitr::opts_chunk$set(echo=TRUE)
+
+colorise <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color, 
+      x)
+  } else x
+}
 ```
 
 # Clustering
@@ -19,22 +28,35 @@ knitr::opts_chunk$set(echo=TRUE)
 
 As it is good practice to do, we load the required library as a first step.
 ```{r load-library, exercise=FALSE}
+library(ggplot2)
 library(plotly)
 ```
 
 First of all, we ought to import the data.
 
+`r colorise("SF: Insert description of the data", "red")`
+
 ```{r read-data, exercise=FALSE}
-df <- moxier::cleaneddata
+(df <- moxier::cleaneddata)
 ```
 
-We build subsets of the dataset.
+We build subsets of the dataset and show the data. Notice that R returns a `list` or a `data.frame` depending on how many columns we pick. We thus call the `data.frame()` function on the lists only for visualisation reasons.
 
 ```{r build-subset, exercise=FALSE}
-df_gender <- df[, 1]
-df_country <- df[, 2]
-df_bio <- df[, 3:5]
-df_social <- df[, 6:8]
+data.frame(df_gender <- df[, 1])
+data.frame(df_country <- df[, 2])
+(df_bio <- df[, 3:5])
+(df_social <- df[, 6:8])
+```
+
+
+*Exercise*
+Visualise the data to get a grasp of the problem.
+
+```{r visualise-data, exercise=TRUE}
+pairs(df)
+
+
 ```
 
 
@@ -43,6 +65,8 @@ df_social <- df[, 6:8]
 ## Computing distances
 
 We now compute the Euclidean distances between data points.
+
+`r colorise("SF: Add comments on distances", "red")`
 
 ```{r distances, exercise=FALSE}
 distances <- dist(df_bio)
@@ -64,6 +88,8 @@ min(distances)
 
 
 ## Means and Variances
+
+`r colorise("SF: Comment mean and variance", "red")`
 
 We compute the vectors of means,
 
@@ -120,6 +146,8 @@ clust_k <- kmeans(x=df_bio[, 3:2], centers=2)
 
 We wish to inspect the result.
 
+`r colorise("SF: Why compute the quantities below? Are they useful?", "red")`
+
 ```{r clust-insp, exercise=FALSE}
 clust_k$iter
 clust_k$cluster
@@ -135,7 +163,7 @@ Inspecting graphically...
 plot(df_bio[, 3:2], col=clust_k$cluster, asp=1, pch=16, xlab=colnames(df_bio)[3], ylab=colnames(df_bio)[2])
 ```
 
-and adding some more information
+and we add the centroids (each centroid is the element the summarises and represent the properties of all the points belonging to the cluster!)
 
 ```{r clust-plot-bio-avg, exercise=FALSE}
 plot(df_bio[, 3:2], col=clust_k$cluster, asp=1, pch=16, xlab=colnames(df_bio)[3], ylab=colnames(df_bio)[2])
@@ -143,7 +171,25 @@ points(rbind(colMeans(df_bio[, 3:2])), pch=17, col="orange", cex=2)
 points(clust_k$centers, pch=17, col=1:3, cex=2)
 ```
 
-Try to change the number of clusters and see what happens!
+
+We print in a table the results according to gender and country of origin. This seemingly unimportant passage, it is actually fundamental in clustering: we are seeking a way to represent the data and to interpret them. We therefore have to constantly ask ourselves the question: "What is it that I have obtained? Is there a plausible interpretation of the results?"
+
+```{r clust-gender-country, exercise=FALSE}
+table(clust_k$cluster, df_gender)
+table(clust_k$cluster, df_country)
+```
+
+For instance, we here see that in the first class, gender "female" is more represented than gender "male".
+
+
+## Number of Clusters and Stability Check
+
+`r colorise("Introduce WITHIN SS", "red")`
+
+
+What happens if we change the number of clusters? Try to think about it. If we imagine to have one single huge cluster, we are ensuring stability above all. If we slightly move a point, nothing will change. Or if we start our algorithm from a different initialisation point, we will end up with the same result. Yet, as the number of clusters grows, we can expect more complex behaviours. Stability may become less certain.
+
+Now, first of all, try to change the number of clusters and see what happens to the points.
 
 ```{r clust-diff-k, exercise=TRUE}
 k <- 2
@@ -154,17 +200,9 @@ points(clust_k$centers, pch=17, col=1:3, cex=2)
 
 ```
 
-We also compare according to gender and country of origin.
-
-```{r clust-gender-country, exercise=FALSE}
-table(clust_k$cluster, df_gender)
-table(clust_k$cluster, df_country)
-```
 
 
-## Stability Check
-
-It is important to assess the stability of the clustering.
+And now we assess the stability of the clustering for different starting values.
 
 ```{r clust-stability, exercise=FALSE}
 within_ss <- matrix(data=NA, nrow=1000, ncol=10)
@@ -187,12 +225,17 @@ boxplot(within_ss / dim(df_bio)[1], main="Within SS")
 
 ## Clustering Social Covariates
 
+### Clustering
+
 We now proceed to cluster the data considering the variables connected with *social networks*.
 
 
 ```{r clust-social, exercise=FALSE}
 clust_social <- kmeans(x=df_social, centers=3)
 ```
+
+
+### Plotting and inspecting
 
 We plot the results.
 
@@ -224,6 +267,8 @@ table(clust_social$cluster, df_country)
 ```
 
 
+### Stability Check
+
 Moreover, we check the stability of the clustering
 
 ```{r clust-social-stability, exercise=FALSE}
@@ -254,7 +299,9 @@ We have to make a series on remarks on
 
 
  
-### Hierarchical Agglomerative Clustering
+## Hierarchical Agglomerative Clustering
+
+`r colorise("Advantags wrt kmean", "red")`
 
 We compute the distance matrix
 
@@ -294,11 +341,23 @@ clusta$order
 
 Finally, we extract the clusters.
 
-```{r random}
-# extracting the clusters
+```{r hierarchical-extract-clusters}
 clustera <- cutree(hclust(d=d, method='average'), 4)
 plot(df_bio[, 3:2], col=clustera+1, pch=16, asp=1)
 
 clusterw <- cutree(hclust(d, method='ward.D'), 3)
+plot(df_bio[, 3:2], col=clusterw+1, pch=16, asp=1)
+```
+
+
+*Exercise* Try to set different numbers of clusters!
+```{r hierarchical-set-clusters, exercise=TRUE}
+no_clusters <- 4
+  
+  
+clustera <- cutree(hclust(d=d, method='average'), no_clusters)
+plot(df_bio[, 3:2], col=clustera+1, pch=16, asp=1)
+
+clusterw <- cutree(hclust(d, method='ward.D'), no_clusters)
 plot(df_bio[, 3:2], col=clusterw+1, pch=16, asp=1)
 ```
